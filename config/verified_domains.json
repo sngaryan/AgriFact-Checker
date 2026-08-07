@@ -1,0 +1,22 @@
+[
+  {
+    "domain": "gov.in",
+    "source": "Government of India Single Window Portal",
+    "last_reviewed": "2026-08-08"
+  },
+  {
+    "domain": "nic.in",
+    "source": "National Informatics Centre, India",
+    "last_reviewed": "2026-08-08"
+  },
+  {
+    "domain": "agriwelfare.gov.in",
+    "source": "Ministry of Agriculture & Farmers Welfare",
+    "last_reviewed": "2026-08-08"
+  },
+  {
+    "domain": "pmkisan.gov.in",
+    "source": "PM Kisan Samman Nidhi Portal",
+    "last_reviewed": "2026-08-08"
+  }
+]

@@ -1,0 +1,24 @@
+# Python cached files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Databases and runtime files
+instance/
+*.db
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Model artifacts (optional to ignore, but good to recreate)
+model/*.joblib
+model/metrics.json
+
+# OS specific files
+.DS_Store
+Thumbs.db
