@@ -9,21 +9,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const len = textarea.value.length;
             charCounter.textContent = len;
             if (len > maxChars) {
-                charCounter.style.color = "#f43f5e"; // Danger color
+                charCounter.style.color = "var(--misleading-text)";
+                charCounter.style.fontWeight = "bold";
             } else {
                 charCounter.style.color = "var(--text-secondary)";
+                charCounter.style.fontWeight = "normal";
             }
         };
 
         textarea.addEventListener("input", updateCounter);
-        // Run once on load
+        // Run once on load to update counter with prefilled text (if any)
         updateCounter();
     }
 
-    // 2. Feedback upvote/downvote mechanism
+    // 2. Feedback upvote/downvote AJAX mechanism
     const feedbackButtons = document.querySelectorAll(".feedback-btn");
     feedbackButtons.forEach(btn => {
-        btn.addEventListener("click", async (e) => {
+        btn.addEventListener("click", async () => {
             const checkId = btn.dataset.checkId;
             const vote = btn.dataset.vote; // 'upvote' or 'downvote'
             
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const result = await response.json();
                 
                 if (response.ok) {
-                    // Update button UI
+                    // Update button active classes
                     const parent = btn.parentElement;
                     const allBtns = parent.querySelectorAll(".feedback-btn");
                     
@@ -55,19 +57,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         btn.classList.add("active-down");
                     }
                     
-                    // Show a quick success alert
-                    const statusText = parent.querySelector(".feedback-status") || document.createElement("span");
-                    statusText.className = "feedback-status";
-                    statusText.style.fontSize = "0.85rem";
-                    statusText.style.color = "var(--primary-color)";
-                    statusText.style.marginLeft = "1rem";
-                    statusText.textContent = "Thank you for your feedback!";
-                    
-                    if (!parent.querySelector(".feedback-status")) {
-                        parent.appendChild(statusText);
+                    // Show a farmer-friendly success status message
+                    const container = btn.closest(".feedback-container");
+                    let statusText = container.querySelector(".feedback-status");
+                    if (!statusText) {
+                        statusText = document.createElement("span");
+                        statusText.className = "feedback-status";
+                        container.appendChild(statusText);
                     }
+                    statusText.textContent = "✓ Thanks for helping check!";
                     
-                    // Disable buttons to prevent double clicking
+                    // Disable feedback buttons to prevent multiple clicks
                     allBtns.forEach(b => b.disabled = true);
                 } else {
                     console.error("Feedback error:", result.error);
