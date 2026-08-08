@@ -38,9 +38,15 @@ def predict(text: str) -> dict:
     X_tfidf = _vectorizer.transform([text])
     
     # Predict label and probability
-    pred_idx = _classifier.predict(X_tfidf)[0]
-    labels = _classifier.classes_
-    predicted_label = labels[pred_idx]
+    pred = _classifier.predict(X_tfidf)[0]
+    classes = list(_classifier.classes_)
+    
+    if isinstance(pred, (int, np.integer)):
+        pred_idx = int(pred)
+        predicted_label = classes[pred_idx]
+    else:
+        predicted_label = str(pred)
+        pred_idx = classes.index(predicted_label)
     
     probs = _classifier.predict_proba(X_tfidf)[0]
     confidence = float(probs[pred_idx]) * 100
@@ -78,7 +84,7 @@ def predict(text: str) -> dict:
                 # If predicted class is classes_[1], positive contribution means positive coef.
                 # If predicted class is classes_[0], positive contribution means negative coef.
                 coeff_val = coef[idx]
-                if predicted_label == labels[1]:
+                if predicted_label == classes[1]:
                     contribution = coeff_val * tfidf_val
                 else:
                     contribution = -coeff_val * tfidf_val
