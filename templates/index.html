@@ -9,8 +9,12 @@
 <body>
     <header>
         <div class="header-container">
-            <h1 class="logo">🌿 AgriFact Check</h1>
-            <p class="subtitle">Check farm-scheme and farming messages before you trust them.</p>
+            <div class="lang-selector-container">
+                <button type="button" class="lang-toggle-btn active" data-lang="en">English</button>
+                <button type="button" class="lang-toggle-btn" data-lang="hi">हिन्दी</button>
+            </div>
+            <h1 class="logo" data-i18n="logo">🌿 AgriFact Check</h1>
+            <p class="subtitle" data-i18n="subtitle">Check farm-scheme and farming messages before you trust them.</p>
         </div>
     </header>
 
@@ -26,10 +30,10 @@
         <!-- Input Section -->
         <section class="checker-card">
             <!-- Screen reader accessible title to pass pytest suite assertions -->
-            <h2 class="sr-only">Verify advisory or scheme</h2>
+            <h2 class="sr-only" data-i18n="sr-verify">Verify advisory or scheme</h2>
             
-            <h2 class="section-title">Is this message reliable?</h2>
-            <p class="helper-text">Paste a WhatsApp forward, headline, or farming tip.</p>
+            <h2 class="section-title" data-i18n="form-title">Is this message reliable?</h2>
+            <p class="helper-text" data-i18n="form-helper">Paste a WhatsApp forward, headline, or farming tip.</p>
 
             <form action="{{ url_for('check') }}" method="POST" id="check-form">
                 <div class="form-group">
@@ -37,22 +41,23 @@
                         name="text" 
                         id="text-input" 
                         placeholder="Paste message here..." 
+                        data-i18n-placeholder="placeholder"
                         maxlength="5000" 
                         required
                         aria-describedby="char-counter"
                     >{% if result %}{{ result.submitted_text }}{% endif %}</textarea>
                     
                     <div id="char-counter" class="char-counter" aria-live="polite">
-                        <span id="char-counter-val">0</span> / 5000 characters
+                        <span id="char-counter-val">0</span> <span data-i18n="char-counter-suffix">/ 5000 characters</span>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" data-i18n="submit-btn">
                     Check message
                 </button>
             </form>
 
-            <p class="disclaimer-note">
+            <p class="disclaimer-note" data-i18n="disclaimer-top">
                 <strong>Please note:</strong> For important scheme decisions, confirm details on official government portals.
             </p>
         </section>
@@ -62,14 +67,14 @@
         {% set is_genuine = result.predicted_label == 'genuine' %}
         <section class="result-card {{ 'genuine' if is_genuine else 'misleading' }}" aria-live="assertive">
             <div class="result-header">
-                <div class="result-badge-label">
+                <div class="result-badge-label" id="result-badge" data-label="{{ result.predicted_label }}">
                     {% if is_genuine %}
-                    <span class="badge-icon" aria-hidden="true">🛡️</span> Likely Genuine
+                    <span class="badge-icon" aria-hidden="true">🛡️</span> <span data-i18n="badge-genuine">Likely Genuine</span>
                     {% else %}
-                    <span class="badge-icon" aria-hidden="true">⚠️</span> Likely Misleading
+                    <span class="badge-icon" aria-hidden="true">⚠️</span> <span data-i18n="badge-misleading">Likely Misleading</span>
                     {% endif %}
                 </div>
-                <div class="confidence-score">
+                <div class="confidence-score" id="confidence-display" data-confidence="{{ result.confidence }}" data-i18n="confidence-score">
                     Model confidence: {{ result.confidence }}%
                 </div>
             </div>
@@ -81,15 +86,15 @@
 
             <div class="result-explanation">
                 {% if is_genuine %}
-                This message matches patterns of reliable farming advice or official government schemes.
+                <span data-i18n="exp-genuine">This message matches patterns of reliable farming advice or official government schemes.</span>
                 {% else %}
-                This message contains claims or wording patterns frequently found in unverified offers or rumors.
+                <span data-i18n="exp-misleading">This message contains claims or wording patterns frequently found in unverified offers or rumors.</span>
                 {% endif %}
             </div>
 
             {% if result.influential_terms %}
             <div class="influential-section">
-                <h3 class="subsection-title">Words that influenced this result</h3>
+                <h3 class="subsection-title" data-i18n="words-influenced">Words that influenced this result</h3>
                 <div class="keyword-chips">
                     {% for term in result.influential_terms %}
                     <span class="keyword-chip">[{{ term }}]</span>
@@ -98,34 +103,34 @@
             </div>
             {% endif %}
 
-            <div class="domain-section">
+            <div class="domain-section" id="domain-section-card" data-domain-status="{{ result.domain_status }}" data-domain-name="{{ result.detected_domain }}">
                 {% if result.domain_status == 'verified' %}
                 <p class="domain-text text-success">
-                    <span class="domain-icon" aria-hidden="true">✅</span> Official-portal list: <strong>{{ result.detected_domain }}</strong> is recognised
+                    <span class="domain-icon" aria-hidden="true">✅</span> <span data-i18n="domain-verified" data-domain="{{ result.detected_domain }}">Official-portal list: <strong>{{ result.detected_domain }}</strong> is recognised</span>
                 </p>
                 {% elif result.domain_status == 'no_domain_found' %}
                 <p class="domain-text text-neutral">
-                    <span class="domain-icon" aria-hidden="true">ℹ️</span> Domain check: No link was found in this message
+                    <span class="domain-icon" aria-hidden="true">ℹ️</span> <span data-i18n="domain-none">Domain check: No link was found in this message</span>
                 </p>
                 {% else %}
                 <p class="domain-text text-warning">
-                    <span class="domain-icon" aria-hidden="true">⚠️</span> Domain check: This site is not in the configured official-portal list (detected: <strong>{{ result.detected_domain }}</strong>)
+                    <span class="domain-icon" aria-hidden="true">⚠️</span> <span data-i18n="domain-warning" data-domain="{{ result.detected_domain }}">Domain check: This site is not in the configured official-portal list (detected: <strong>{{ result.detected_domain }}</strong>)</span>
                 </p>
                 {% endif %}
             </div>
 
-            <div class="final-disclaimer">
+            <div class="final-disclaimer" data-i18n="final-disclaimer">
                 This is an automated guide, not an official fact-check or scheme-eligibility decision.
             </div>
 
             <!-- Feedback Section -->
             <div class="feedback-container">
-                <span class="feedback-question">Was this check helpful?</span>
+                <span class="feedback-question" data-i18n="feedback-question">Was this check helpful?</span>
                 <div class="feedback-actions">
-                    <button type="button" class="feedback-btn" data-check-id="{{ result.id }}" data-vote="upvote" aria-label="Yes, this was helpful">
+                    <button type="button" class="feedback-btn" data-check-id="{{ result.id }}" data-vote="upvote" aria-label="Yes, this was helpful" data-i18n="feedback-yes">
                         👍 Yes
                     </button>
-                    <button type="button" class="feedback-btn" data-check-id="{{ result.id }}" data-vote="downvote" aria-label="No, this was not helpful">
+                    <button type="button" class="feedback-btn" data-check-id="{{ result.id }}" data-vote="downvote" aria-label="No, this was not helpful" data-i18n="feedback-no">
                         👎 No
                     </button>
                 </div>
@@ -135,17 +140,17 @@
 
         <!-- History Section -->
         <section class="history-card">
-            <h2 class="section-title">Recent checks</h2>
+            <h2 class="section-title" data-i18n="history-title">Recent checks</h2>
             <div class="history-list">
                 {% if recent_checks %}
                     {% for check in recent_checks %}
                     {% set c_genuine = check.predicted_label == 'genuine' %}
                     <div class="history-row-card">
                         <div class="history-row-top">
-                            <span class="history-badge {{ 'genuine' if c_genuine else 'misleading' }}">
+                            <span class="history-badge {{ 'genuine' if c_genuine else 'misleading' }}" data-i18n-badge="{{ check.predicted_label }}">
                                 {% if c_genuine %}🛡️ Genuine{% else %}⚠️ Misleading{% endif %}
                             </span>
-                            <span class="history-meta">
+                            <span class="history-meta" data-i18n-meta data-confidence="{{ check.confidence }}" data-date="{{ check.created_at[:16].replace('T', ' ') }}">
                                 {{ check.confidence }}% confidence • {{ check.created_at[:16].replace('T', ' ') }}
                             </span>
                         </div>
@@ -153,7 +158,7 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <p class="empty-history-text">Your recent checks will appear here.</p>
+                    <p class="empty-history-text" data-i18n="empty-history">Your recent checks will appear here.</p>
                 {% endif %}
             </div>
         </section>
@@ -161,8 +166,8 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <p>🌿 <strong>AgriFact Check</strong></p>
-            <p>Designed to help farmers spot fake news, suspicious tips, and fraudulent subsidy offers. Always double check with official government departments before making financial decisions.</p>
+            <p>🌿 <strong data-i18n="logo">🌿 AgriFact Check</strong></p>
+            <p data-i18n="footer-text">Designed to help farmers spot fake news, suspicious tips, and fraudulent subsidy offers. Always double check with official government departments before making financial decisions.</p>
         </div>
     </footer>
 

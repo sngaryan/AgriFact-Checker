@@ -58,6 +58,44 @@ header {
     margin: 0 auto;
 }
 
+/* Language selector container */
+.lang-selector-container {
+    display: inline-flex;
+    background: #f1ede6;
+    border-radius: 20px;
+    padding: 3px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.lang-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.35rem 1.2rem;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 17px;
+    transition: var(--transition);
+}
+
+.lang-toggle-btn:hover {
+    color: var(--text-primary);
+}
+
+.lang-toggle-btn.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(45, 106, 79, 0.2);
+}
+
+.lang-toggle-btn:focus {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+}
+
 h1.logo {
     font-family: var(--font-heading);
     font-size: 1.8rem;
