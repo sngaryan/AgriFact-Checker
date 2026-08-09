@@ -43,6 +43,19 @@ def init_db() -> None:
         )
     ''')
     
+    # Create schemes_search virtual table using FTS5
+    cursor.execute('''
+        CREATE VIRTUAL TABLE IF NOT EXISTS schemes_search USING fts5(
+            name,
+            name_hi,
+            state,
+            official_url,
+            description,
+            description_hi,
+            keywords
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 

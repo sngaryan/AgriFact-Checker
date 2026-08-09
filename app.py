@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify, abort
 from services.database import init_db, save_check, get_recent_checks, save_feedback
 from services.domain_check import check_domains
 from services.predictor import predict, load_model
+from services.scheme_matcher import match_scheme
 from config import MAX_INPUT_LENGTH
 
 app = Flask(__name__)
@@ -48,6 +49,9 @@ def check():
         # Call predictor
         prediction = predict(trimmed_text)
         
+        # Call scheme matcher
+        matched_scheme = match_scheme(trimmed_text)
+        
         # Merge result
         payload = {
             "submitted_text": trimmed_text,
@@ -55,7 +59,8 @@ def check():
             "confidence": prediction["confidence"],
             "influential_terms": prediction["influential_terms"],
             "detected_domain": domain_result["detected_domain"],
-            "domain_status": domain_result["domain_status"]
+            "domain_status": domain_result["domain_status"],
+            "matched_scheme": matched_scheme
         }
         
         # Save check to database

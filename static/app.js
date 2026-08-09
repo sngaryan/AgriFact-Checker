@@ -26,7 +26,13 @@ const TRANSLATIONS = {
         "empty-history": "Your recent checks will appear here.",
         "footer-text": "Designed to help farmers spot fake news, suspicious tips, and fraudulent subsidy offers. Always double check with official government departments before making financial decisions.",
         "char-counter-suffix": "/ 5000 characters",
-        "history-meta": "{confidence}% confidence • {date}"
+        "history-meta": "{confidence}% confidence • {date}",
+        "scheme-match-header": "Related Government Scheme",
+        "scheme-visit-btn": "Visit Official Portal ↗",
+        "scheme-fallback-header": "💡 Verify via Official Portals",
+        "scheme-fallback-text": "If you did not find a matching scheme above, you can search the official directories:",
+        "link-myscheme": "myScheme Portal (myscheme.gov.in) ↗",
+        "link-indiagov": "National Portal of India (india.gov.in) ↗"
     },
     hi: {
         "logo": "🌿 एग्रीफैक्ट चेक",
@@ -55,7 +61,13 @@ const TRANSLATIONS = {
         "empty-history": "आपकी हाल ही की जांच यहां दिखाई देगी।",
         "footer-text": "किसानों को फर्जी खबरों, संदिग्ध सुझावों और धोखाधड़ी वाले सब्सिडी प्रस्तावों को पहचानने में मदद करने के लिए डिज़ाइन किया गया है। वित्तीय निर्णय लेने से पहले हमेशा आधिकारिक सरकारी विभागों से दोबारा जांच करें।",
         "char-counter-suffix": "/ 5000 अक्षर",
-        "history-meta": "{confidence}% विश्वास • {date}"
+        "history-meta": "{confidence}% विश्वास • {date}",
+        "scheme-match-header": "संबंधित सरकारी योजना",
+        "scheme-visit-btn": "आधिकारिक पोर्टल पर जाएं ↗",
+        "scheme-fallback-header": "💡 आधिकारिक पोर्टलों द्वारा सत्यापित करें",
+        "scheme-fallback-text": "यदि आपको ऊपर कोई मिलान योजना नहीं मिली है, तो आप आधिकारिक निर्देशिकाओं में खोज सकते हैं:",
+        "link-myscheme": "माईस्कीम पोर्टल (myscheme.gov.in) ↗",
+        "link-indiagov": "भारत का राष्ट्रीय पोर्टल (india.gov.in) ↗"
     }
 };
 
@@ -204,6 +216,20 @@ document.addEventListener("DOMContentLoaded", () => {
             let text = TRANSLATIONS[lang]["history-meta"];
             text = text.replace("{confidence}", conf).replace("{date}", date);
             el.textContent = text;
+        });
+
+        // Update scheme names
+        const schemeNames = document.querySelectorAll("[data-i18n-scheme-name]");
+        schemeNames.forEach(el => {
+            const val = el.getAttribute(`data-${lang}`);
+            if (val) el.textContent = val;
+        });
+
+        // Update scheme descriptions
+        const schemeDescs = document.querySelectorAll("[data-i18n-scheme-desc]");
+        schemeDescs.forEach(el => {
+            const val = el.getAttribute(`data-${lang}`);
+            if (val) el.textContent = val;
         });
     };
 

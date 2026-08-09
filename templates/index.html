@@ -136,6 +136,52 @@
                 </div>
             </div>
         </section>
+
+        <!-- Scheme Match / Fallback Card -->
+        {% if result.matched_scheme %}
+        <section class="scheme-match-card" aria-live="polite">
+            <h3 class="scheme-card-title">
+                <span class="scheme-icon" aria-hidden="true">💡</span>
+                <span data-i18n="scheme-match-header">Related Government Scheme</span>
+            </h3>
+            <div class="scheme-card-body">
+                <h4 class="scheme-name-label">
+                    <span data-i18n-scheme-name data-en="{{ result.matched_scheme.name }}" data-hi="{{ result.matched_scheme.name_hi }}">
+                        {{ result.matched_scheme.name }}
+                    </span>
+                    <span class="scheme-state-badge">({{ result.matched_scheme.state }})</span>
+                </h4>
+                <p class="scheme-description-text" data-i18n-scheme-desc data-en="{{ result.matched_scheme.description }}" data-hi="{{ result.matched_scheme.description_hi }}">
+                    {{ result.matched_scheme.description }}
+                </p>
+                <div class="scheme-card-actions">
+                    <a href="{{ result.matched_scheme.official_url }}" target="_blank" class="btn btn-scheme-link" data-i18n="scheme-visit-btn">
+                        Visit Official Portal ↗
+                    </a>
+                </div>
+            </div>
+        </section>
+        {% else %}
+        <section class="scheme-fallback-card">
+            <h3 class="scheme-card-title">
+                <span class="scheme-icon" aria-hidden="true">🔍</span>
+                <span data-i18n="scheme-fallback-header">Verify via Official Portals</span>
+            </h3>
+            <div class="scheme-card-body">
+                <p class="scheme-fallback-intro" data-i18n="scheme-fallback-text">
+                    If you did not find a matching scheme above, you can search the official directories:
+                </p>
+                <div class="fallback-links-container">
+                    <a href="https://www.myscheme.gov.in" target="_blank" class="fallback-link-btn" data-i18n="link-myscheme">
+                        myScheme Portal (myscheme.gov.in) ↗
+                    </a>
+                    <a href="https://www.india.gov.in" target="_blank" class="fallback-link-btn" data-i18n="link-indiagov">
+                        National Portal of India (india.gov.in) ↗
+                    </a>
+                </div>
+            </div>
+        </section>
+        {% endif %}
         {% endif %}
 
         <!-- History Section -->
