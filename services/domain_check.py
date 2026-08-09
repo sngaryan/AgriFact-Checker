@@ -8,25 +8,37 @@ def check_domains(text: str) -> dict:
     """Extract the first URL host and return its trust-list state.
     
     Args:
-        text (str): Input text containing potential URLs.
+        text (str): Input text containing potential URLs or domain names.
         
     Returns:
         dict: containing detected_domain and domain_status.
     """
-    # Regex to find URLs starting with http://, https://, or www.
+    if not text:
+        return {"detected_domain": "", "domain_status": "no_domain_found"}
+        
+    # Primary regex: URLs starting with http://, https://, or www.
     url_pattern = re.compile(
         r'(?:https?://|www\.)[a-zA-Z0-9.\-_]+(?:\.[a-zA-Z]{2,})+(?:[/?#]\S*)?',
         re.IGNORECASE
     )
     
+    # Secondary regex: Standalone domain names like mlss.gov.jm or pmkisan.gov.in
+    domain_pattern = re.compile(
+        r'\b(?:[a-zA-Z0-9\-_]+\.)+(?:gov\.[a-z]{2,3}|nic\.in|gov|org|com|net|edu|info|in)\b',
+        re.IGNORECASE
+    )
+    
     matches = url_pattern.findall(text)
+    if not matches:
+        matches = domain_pattern.findall(text)
+        
     if not matches:
         return {
             "detected_domain": "",
             "domain_status": "no_domain_found"
         }
         
-    first_url = matches[0]
+    first_url = matches[0].strip()
     
     # Ensure it starts with http/https for urlparse to parse correctly
     if not (first_url.startswith('http://') or first_url.startswith('https://')):

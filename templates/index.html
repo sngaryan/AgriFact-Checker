@@ -35,7 +35,7 @@
             <h2 class="section-title" data-i18n="form-title">Is this message reliable?</h2>
             <p class="helper-text" data-i18n="form-helper">Paste a WhatsApp forward, headline, or farming tip.</p>
 
-            <form action="{{ url_for('check') }}" method="POST" id="check-form">
+            <form action="{{ url_for('check') }}" method="POST" enctype="multipart/form-data" id="check-form">
                 <div class="form-group">
                     <textarea 
                         name="text" 
@@ -43,12 +43,32 @@
                         placeholder="Paste message here..." 
                         data-i18n-placeholder="placeholder"
                         maxlength="5000" 
-                        required
                         aria-describedby="char-counter"
                     >{% if result %}{{ result.submitted_text }}{% endif %}</textarea>
                     
                     <div id="char-counter" class="char-counter" aria-live="polite">
                         <span id="char-counter-val">0</span> <span data-i18n="char-counter-suffix">/ 5000 characters</span>
+                    </div>
+                </div>
+
+                <!-- Flyer / WhatsApp Image OCR Upload Card -->
+                <div class="file-upload-card" id="file-dropzone">
+                    <div class="file-upload-header">
+                        <div class="upload-icon-circle">🖼️</div>
+                        <div class="upload-text-content">
+                            <h3 class="upload-title">Have a poster or flyer photo?</h3>
+                            <p class="upload-description">
+                                Upload a WhatsApp flyer or photo. Our <strong>Image Text Extractor (OCR)</strong> will automatically read text from the picture and check its claims.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="file-upload-controls">
+                        <label for="image-input" class="btn-file-select">
+                            📁 Choose Flyer Image
+                        </label>
+                        <input type="file" name="image" id="image-input" accept="image/*" class="file-input">
+                        <span id="file-name-preview" class="file-name-preview">No image selected</span>
                     </div>
                 </div>
 
@@ -66,6 +86,16 @@
         {% if result %}
         {% set is_genuine = result.predicted_label == 'genuine' %}
         <section class="result-card {{ 'genuine' if is_genuine else 'misleading' }}" aria-live="assertive">
+            {% if result.extracted_from_image %}
+            <div class="ocr-notice">
+                <div>📷 <strong>Text extracted from uploaded flyer image via OCR</strong></div>
+                <details class="ocr-text-details">
+                    <summary>📄 View extracted text</summary>
+                    <pre class="ocr-raw-text">{{ result.submitted_text }}</pre>
+                </details>
+            </div>
+            {% endif %}
+
             <div class="result-header">
                 <div class="result-badge-label" id="result-badge" data-label="{{ result.predicted_label }}">
                     {% if is_genuine %}

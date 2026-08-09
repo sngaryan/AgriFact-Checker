@@ -4,6 +4,7 @@ from services.database import init_db, save_check, get_recent_checks, save_feedb
 from services.domain_check import check_domains
 from services.predictor import predict, load_model
 from services.scheme_matcher import match_scheme
+from services.ocr_service import extract_text_from_image
 from config import MAX_INPUT_LENGTH
 
 app = Flask(__name__)
@@ -18,15 +19,26 @@ def index():
         recent_checks = get_recent_checks(limit=10)
     except Exception as e:
         recent_checks = []
-        # In a real app, log the exception. Here we keep it quiet.
         
     return render_template("index.html", recent_checks=recent_checks, error=None, result=None)
 
 @app.route("/check", methods=["POST"])
 def check():
-    """Validate input text, call prediction and domain checking, store result, and render."""
+    """Validate input text or flyer image upload, call prediction and domain checking, store result, and render."""
     text = request.form.get("text", "")
     trimmed_text = text.strip()
+    extracted_from_image = False
+    
+    # Handle optional flyer image upload for OCR
+    image_file = request.files.get("image")
+    if image_file and image_file.filename:
+        ocr_result = extract_text_from_image(image_file)
+        if ocr_result["success"] and ocr_result["text"]:
+            trimmed_text = ocr_result["text"]
+            extracted_from_image = True
+        elif not trimmed_text:
+            recent_checks = get_recent_checks(limit=10)
+            return render_template("index.html", recent_checks=recent_checks, error=ocr_result["message"], result=None)
     
     # Validation
     if not trimmed_text:
@@ -60,7 +72,8 @@ def check():
             "influential_terms": prediction["influential_terms"],
             "detected_domain": domain_result["detected_domain"],
             "domain_status": domain_result["domain_status"],
-            "matched_scheme": matched_scheme
+            "matched_scheme": matched_scheme,
+            "extracted_from_image": extracted_from_image
         }
         
         # Save check to database

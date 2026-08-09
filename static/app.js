@@ -245,4 +245,51 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load preferred or default language on load
     const preferred = localStorage.getItem("preferred_language") || "en";
     setLanguage(preferred);
+
+    // 4. File / Flyer Image Selection Preview & Drag-and-Drop
+    const imageInput = document.getElementById("image-input");
+    const fileNamePreview = document.getElementById("file-name-preview");
+    const fileDropzone = document.getElementById("file-dropzone");
+
+    const handleFileSelection = (files) => {
+        if (files && files.length > 0) {
+            fileNamePreview.textContent = `📷 ${files[0].name}`;
+            fileNamePreview.style.color = "var(--primary-color)";
+            fileNamePreview.style.fontWeight = "600";
+        } else {
+            fileNamePreview.textContent = "No image selected";
+            fileNamePreview.style.color = "var(--text-secondary)";
+        }
+    };
+
+    if (imageInput && fileNamePreview) {
+        imageInput.addEventListener("change", () => handleFileSelection(imageInput.files));
+    }
+
+    if (fileDropzone && imageInput) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileDropzone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileDropzone.classList.remove('drag-over');
+            }, false);
+        });
+
+        fileDropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                imageInput.files = files;
+                handleFileSelection(files);
+            }
+        });
+    }
 });
