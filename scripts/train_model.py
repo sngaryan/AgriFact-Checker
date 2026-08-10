@@ -67,15 +67,16 @@ def train_and_evaluate():
     print(f"  Val:   {len(val_df)} samples")
     print(f"  Test:  {len(test_df)} samples")
     
-    # TF-IDF Vectorizer
+    # TF-IDF Vectorizer with enriched n-gram features
     vectorizer = TfidfVectorizer(
-        max_features=5000,
-        ngram_range=(1, 2),
+        max_features=10000,
+        ngram_range=(1, 3),
         stop_words='english',
-        sublinear_tf=True
+        sublinear_tf=True,
+        strip_accents='unicode'
     )
     
-    # Combine train + val for final model training, or train on train and validate on val
+    # Combine train + val for training text, test for evaluation
     X_train_text = train_df['text'].tolist()
     y_train = train_df['label'].tolist()
     
@@ -92,14 +93,14 @@ def train_and_evaluate():
     
     labels = np.unique(y_train)
     
-    print("\n--- Training Model 1: Logistic Regression ---")
-    log_reg = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
+    print("\n--- Training Model 1: Tuned Logistic Regression ---")
+    log_reg = LogisticRegression(C=5.0, max_iter=1000, random_state=42, class_weight='balanced')
     log_reg.fit(X_train, y_train)
     lr_val_metrics = evaluate_model(log_reg, X_val, y_val, "Logistic Regression (Val)", labels)
     lr_test_metrics = evaluate_model(log_reg, X_test, y_test, "Logistic Regression (Test)", labels)
     
     print("\n--- Training Model 2: Multinomial Naive Bayes Baseline ---")
-    nb = MultinomialNB(alpha=1.0)
+    nb = MultinomialNB(alpha=0.5)
     nb.fit(X_train, y_train)
     nb_val_metrics = evaluate_model(nb, X_val, y_val, "Multinomial Naive Bayes (Val)", labels)
     nb_test_metrics = evaluate_model(nb, X_test, y_test, "Multinomial Naive Bayes (Test)", labels)
@@ -120,14 +121,30 @@ def train_and_evaluate():
     print(f"  Matrix: {lr_test_metrics['confusion_matrix']}")
     print("="*70)
     
-    # We select Logistic Regression as primary model because its coefficients provide interpretable word contributions
-    selected_classifier = log_reg
-    selected_name = "Logistic Regression (TF-IDF)"
+    # Fit final Logistic Regression on combined train + val data for maximum vocabulary coverage
+    print("\nFitting final model on combined Train + Validation dataset...")
+    full_train_text = X_train_text + X_val_text
+    full_y_train = y_train + y_val
+    
+    final_vectorizer = TfidfVectorizer(
+        max_features=10000,
+        ngram_range=(1, 3),
+        stop_words='english',
+        sublinear_tf=True,
+        strip_accents='unicode'
+    )
+    X_full_train = final_vectorizer.fit_transform(full_train_text)
+    final_log_reg = LogisticRegression(C=5.0, max_iter=1000, random_state=42, class_weight='balanced')
+    final_log_reg.fit(X_full_train, full_y_train)
+    
+    selected_classifier = final_log_reg
+    vectorizer_to_save = final_vectorizer
+    selected_name = "Logistic Regression (TF-IDF N-Gram)"
     
     # Save artifacts
     os.makedirs(os.path.dirname(CLASSIFIER_PATH), exist_ok=True)
     joblib.dump(selected_classifier, CLASSIFIER_PATH)
-    joblib.dump(vectorizer, VECTORIZER_PATH)
+    joblib.dump(vectorizer_to_save, VECTORIZER_PATH)
     print(f"\nModel exported successfully to:")
     print(f"  - Classifier: {CLASSIFIER_PATH}")
     print(f"  - Vectorizer: {VECTORIZER_PATH}")
