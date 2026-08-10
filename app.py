@@ -64,6 +64,15 @@ def check():
         # Call scheme matcher
         matched_scheme = match_scheme(trimmed_text)
         
+        # Domain safety & Commercial Offer classification:
+        # If a non-government link is detected (.com, .net, etc.), classify as unverified commercial link
+        if domain_result["domain_status"] == "not_in_list":
+            prediction["label"] = "commercial_promo"
+            prediction["confidence"] = max(prediction["confidence"], 85.0)
+        elif domain_result["domain_status"] == "verified":
+            if prediction["label"] == "genuine":
+                prediction["confidence"] = max(prediction["confidence"], 90.0)
+                
         # Merge result
         payload = {
             "submitted_text": trimmed_text,

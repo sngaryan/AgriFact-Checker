@@ -21,6 +21,10 @@
     --misleading-border: #fcd5a1;
     --misleading-text: #b25e00;
 
+    --commercial-bg: #fffbe6;
+    --commercial-border: #ffe58f;
+    --commercial-text: #d48806;
+
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
     --transition: all 0.2s ease-in-out;
@@ -258,6 +262,12 @@ a:focus {
     border-left: 6px solid var(--misleading-border);
     background: var(--misleading-bg);
     border-color: var(--misleading-border);
+}
+
+.result-card.commercial {
+    border-left: 6px solid var(--commercial-border);
+    background: var(--commercial-bg);
+    border-color: var(--commercial-border);
 }
 
 .result-header {

@@ -85,7 +85,8 @@
         <!-- Result Card -->
         {% if result %}
         {% set is_genuine = result.predicted_label == 'genuine' %}
-        <section class="result-card {{ 'genuine' if is_genuine else 'misleading' }}" aria-live="assertive">
+        {% set is_commercial = result.predicted_label == 'commercial_promo' %}
+        <section class="result-card {{ 'genuine' if is_genuine else ('commercial' if is_commercial else 'misleading') }}" aria-live="assertive">
             {% if result.extracted_from_image %}
             <div class="ocr-notice">
                 <div>📷 <strong>Text extracted from uploaded flyer image via OCR</strong></div>
@@ -100,6 +101,8 @@
                 <div class="result-badge-label" id="result-badge" data-label="{{ result.predicted_label }}">
                     {% if is_genuine %}
                     <span class="badge-icon" aria-hidden="true">🛡️</span> <span data-i18n="badge-genuine">Likely Genuine</span>
+                    {% elif is_commercial %}
+                    <span class="badge-icon" aria-hidden="true">🏷️</span> <span data-i18n="badge-commercial">Unverified Commercial Link</span>
                     {% else %}
                     <span class="badge-icon" aria-hidden="true">⚠️</span> <span data-i18n="badge-misleading">Likely Misleading</span>
                     {% endif %}
@@ -117,6 +120,8 @@
             <div class="result-explanation">
                 {% if is_genuine %}
                 <span data-i18n="exp-genuine">This message matches patterns of reliable farming advice or official government schemes.</span>
+                {% elif is_commercial %}
+                <span data-i18n="exp-commercial">This message links to a commercial store or private website. It is not an official government scheme portal.</span>
                 {% else %}
                 <span data-i18n="exp-misleading">This message contains claims or wording patterns frequently found in unverified offers or rumors.</span>
                 {% endif %}
@@ -221,10 +226,11 @@
                 {% if recent_checks %}
                     {% for check in recent_checks %}
                     {% set c_genuine = check.predicted_label == 'genuine' %}
+                    {% set c_commercial = check.predicted_label == 'commercial_promo' %}
                     <div class="history-row-card">
                         <div class="history-row-top">
-                            <span class="history-badge {{ 'genuine' if c_genuine else 'misleading' }}" data-i18n-badge="{{ check.predicted_label }}">
-                                {% if c_genuine %}🛡️ Genuine{% else %}⚠️ Misleading{% endif %}
+                            <span class="history-badge {{ 'genuine' if c_genuine else ('commercial' if c_commercial else 'misleading') }}" data-i18n-badge="{{ check.predicted_label }}">
+                                {% if c_genuine %}🛡️ Genuine{% elif c_commercial %}🏷️ Commercial{% else %}⚠️ Misleading{% endif %}
                             </span>
                             <span class="history-meta" data-i18n-meta data-confidence="{{ check.confidence }}" data-date="{{ check.created_at[:16].replace('T', ' ') }}">
                                 {{ check.confidence }}% confidence • {{ check.created_at[:16].replace('T', ' ') }}
