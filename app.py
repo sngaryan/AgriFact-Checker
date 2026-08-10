@@ -5,6 +5,7 @@ from services.domain_check import check_domains
 from services.predictor import predict, predict_with_domain, load_model
 from services.scheme_matcher import match_scheme
 from services.ocr_service import extract_text_from_image
+from services.topic_checker import check_agricultural_relevance
 from config import MAX_INPUT_LENGTH
 
 app = Flask(__name__)
@@ -55,7 +56,10 @@ def check():
         )
         
     try:
-        # Call domain check first (needed for trust-fusion)
+        # Check agricultural topic relevance first
+        relevance_result = check_agricultural_relevance(trimmed_text)
+        
+        # Call domain check (needed for trust-fusion)
         domain_result = check_domains(trimmed_text)
         
         # Call predictor with domain status so confidence is boosted accordingly
@@ -64,9 +68,16 @@ def check():
         # Call scheme matcher
         matched_scheme = match_scheme(trimmed_text)
         
-        # Domain safety & Commercial Offer classification:
-        # If a non-government link is detected (.com, .net, etc.), classify as unverified commercial link
-        if domain_result["domain_status"] == "not_in_list":
+        # Topic relevance & Domain safety classification:
+        if not relevance_result["is_relevant"]:
+            prediction["label"] = "out_of_domain"
+            prediction["confidence"] = min(prediction["confidence"], 60.0)
+            if not relevance_result["matched_terms"]:
+                # Clear influential terms if text has 0 agriculture context
+                prediction["influential_terms"] = []
+        elif 48.0 <= prediction["confidence"] <= 54.0 and len(relevance_result["matched_terms"]) <= 1:
+            prediction["label"] = "uncertain"
+        elif domain_result["domain_status"] == "not_in_list":
             prediction["label"] = "commercial_promo"
             prediction["confidence"] = max(prediction["confidence"], 85.0)
         elif domain_result["domain_status"] == "verified":
@@ -83,7 +94,8 @@ def check():
             "domain_status": domain_result["domain_status"],
             "matched_scheme": matched_scheme,
             "extracted_from_image": extracted_from_image,
-            "domain_boost": prediction.get("domain_boost", 0.0)
+            "domain_boost": prediction.get("domain_boost", 0.0),
+            "is_agricultural": relevance_result["is_relevant"]
         }
         
         # Save check to database

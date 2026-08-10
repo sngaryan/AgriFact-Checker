@@ -148,7 +148,7 @@ def train_and_evaluate():
     # Save artifacts
     os.makedirs(os.path.dirname(CLASSIFIER_PATH), exist_ok=True)
     joblib.dump(selected_classifier, CLASSIFIER_PATH)
-    joblib.dump(vectorizer_to_save, VECTORIZER_PATH)
+    joblib.dump(vectorizer, VECTORIZER_PATH)
     print(f"\nModel exported successfully to:")
     print(f"  - Classifier: {CLASSIFIER_PATH}")
     print(f"  - Vectorizer: {VECTORIZER_PATH}")

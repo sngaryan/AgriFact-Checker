@@ -25,6 +25,14 @@
     --commercial-border: #ffe58f;
     --commercial-text: #d48806;
 
+    --ood-bg: #f0f4f8;
+    --ood-border: #cbd5e1;
+    --ood-text: #334155;
+
+    --uncertain-bg: #f8fafc;
+    --uncertain-border: #cbd5e1;
+    --uncertain-text: #475569;
+
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
     --transition: all 0.2s ease-in-out;
@@ -268,6 +276,18 @@ a:focus {
     border-left: 6px solid var(--commercial-border);
     background: var(--commercial-bg);
     border-color: var(--commercial-border);
+}
+
+.result-card.out_of_domain {
+    border-left: 6px solid var(--ood-border);
+    background: var(--ood-bg);
+    border-color: var(--ood-border);
+}
+
+.result-card.uncertain {
+    border-left: 6px solid var(--uncertain-border);
+    background: var(--uncertain-bg);
+    border-color: var(--uncertain-border);
 }
 
 .result-header {
@@ -653,6 +673,18 @@ a:focus {
     background-color: var(--misleading-bg);
     border: 1px solid var(--misleading-border);
     color: var(--misleading-text);
+}
+
+.history-badge.out_of_domain {
+    background-color: var(--ood-bg);
+    border: 1px solid var(--ood-border);
+    color: var(--ood-text);
+}
+
+.history-badge.uncertain {
+    background-color: var(--uncertain-bg);
+    border: 1px solid var(--uncertain-border);
+    color: var(--uncertain-text);
 }
 
 .history-meta {
