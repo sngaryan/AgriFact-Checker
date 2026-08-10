@@ -67,6 +67,17 @@ SCHEMES_DATA = [
         "keywords": "enam e-nam apmc mandi online trade crop price digital auction unified market transparent selling ई-नाम मंडी बोली मूल्य फसल"
     },
 
+    # --- BIHAR SCHEMES ---
+    {
+        "name": "Bihar Rajya Fasal Sahayata Yojana (Kisan Fasal Sahayata)",
+        "name_hi": "बिहार राज्य फसल सहायता योजना (किसान फसल सहायता)",
+        "state": "Bihar",
+        "official_url": "https://pacsonline.bih.nic.in/fsy/",
+        "description": "State crop assistance scheme providing direct financial relief of up to ₹10,000 per hectare to farmers for crop losses caused by seasonal natural calamities without requiring insurance premiums.",
+        "description_hi": "राज्य फसल सहायता योजना जो बिना बीमा प्रीमियम के मौसमी प्राकृतिक आपदाओं से हुए फसल नुकसान पर किसानों को ₹10,000 प्रति हेक्टेयर तक की सीधी वित्तीय राहत प्रदान करती है।",
+        "keywords": "kisan fasal sahayata fasal sahayata bihar bih pacsonline crop assistance seasonal farming seeds fertilizers crop relief sahayata yojana फसल सहायता बिहार किसान सहायता"
+    },
+
     # --- CHHATTISGARH SCHEMES ---
     {
         "name": "Godhan Nyay Yojana",
