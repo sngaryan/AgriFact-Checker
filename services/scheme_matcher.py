@@ -15,8 +15,16 @@ def match_scheme(text: str) -> dict | None:
         return None
         
     # Extract alphanumeric words (supporting English and Devanagari script for Hindi)
-    # Devanagari Unicode block: \u0900-\u097F
-    words = re.findall(r'\b[a-zA-Z0-9\u0900-\u097F]{3,}\b', text.lower())
+    raw_words = re.findall(r'\b[a-zA-Z0-9\u0900-\u097F]{3,}\b', text.lower())
+    
+    # Generic common words that should not trigger specific scheme matches on their own
+    generic_words = {
+        'farmer', 'farmers', 'scheme', 'schemes', 'update', 'information', 'details',
+        'products', 'portal', 'online', 'check', 'apply', 'benefit', 'benefits',
+        'purchase', 'eligible', 'selected', 'amount', 'status', 'support', 'guidelines'
+    }
+    
+    words = [w for w in raw_words if w not in generic_words]
     if not words:
         return None
         

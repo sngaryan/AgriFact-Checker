@@ -9,9 +9,11 @@ const TRANSLATIONS = {
         "submit-btn": "Check message",
         "disclaimer-top": "<strong>Please note:</strong> For important scheme decisions, confirm details on official government portals.",
         "badge-genuine": "Likely Genuine",
+        "badge-commercial": "Unverified Commercial Link",
         "badge-misleading": "Likely Misleading",
         "confidence-score": "Model confidence: {val}%",
         "exp-genuine": "This message matches patterns of reliable farming advice or official government schemes.",
+        "exp-commercial": "This message links to a commercial store or private website. It is not an official government scheme portal.",
         "exp-misleading": "This message contains claims or wording patterns frequently found in unverified offers or rumors.",
         "words-influenced": "Words that influenced this result",
         "domain-verified": "Official-portal list: {domain} is recognised",
@@ -44,9 +46,11 @@ const TRANSLATIONS = {
         "submit-btn": "संदेश की जांच करें",
         "disclaimer-top": "<strong>कृपया ध्यान दें:</strong> महत्वपूर्ण योजना निर्णयों के लिए, आधिकारिक सरकारी पोर्टलों पर विवरण की पुष्टि करें।",
         "badge-genuine": "विश्वसनीय होने की संभावना",
+        "badge-commercial": "असत्यापित व्यावसायिक लिंक",
         "badge-misleading": "गुमराह करने वाला होने की संभावना",
         "confidence-score": "मॉडल का विश्वास: {val}%",
         "exp-genuine": "यह संदेश विश्वसनीय खेती की सलाह या आधिकारिक सरकारी योजनाओं के पैटर्न से मेल खाता है।",
+        "exp-commercial": "यह संदेश किसी व्यावसायिक स्टोर या निजी वेबसाइट से लिंक है। यह कोई आधिकारिक सरकारी योजना पोर्टल नहीं है।",
         "exp-misleading": "इस संदेश में ऐसे दावे या शब्द पैटर्न हैं जो अक्सर असत्यापित ऑफ़र या अफवाहों में पाए जाते हैं।",
         "words-influenced": "वे शब्द जिन्होंने इस परिणाम को प्रभावित किया",
         "domain-verified": "आधिकारिक पोर्टल सूची: {domain} मान्यता प्राप्त है",
@@ -203,6 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const val = el.getAttribute("data-i18n-badge");
             if (val === 'genuine') {
                 el.textContent = lang === 'hi' ? '🛡️ असली' : '🛡️ Genuine';
+            } else if (val === 'commercial_promo') {
+                el.textContent = lang === 'hi' ? '🏷️ व्यावसायिक' : '🏷️ Commercial';
             } else {
                 el.textContent = lang === 'hi' ? '⚠️ गुमराह करने वाला' : '⚠️ Misleading';
             }

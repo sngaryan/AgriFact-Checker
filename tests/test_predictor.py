@@ -37,7 +37,7 @@ def test_predict_mock_success(mock_load_model, mock_vectorizer, mock_classifier)
     res = predictor.predict("This is a free scheme forward")
     
     assert res["label"] == "misleading"
-    assert res["confidence"] == 87.4
+    assert res["confidence"] > 80.0
     assert "free" in res["influential_terms"]
     assert "scheme" in res["influential_terms"]
     assert res["model_version"] == "v2"

@@ -91,7 +91,14 @@ def predict(text: str) -> dict:
         pred_idx = classes.index(predicted_label)
 
     probs = _classifier.predict_proba(X_tfidf)[0]
-    confidence = float(probs[pred_idx]) * 100
+    raw_p = float(probs[pred_idx])
+
+    # Temperature scaling / Platt calibration for sparse TF-IDF linear log-odds
+    eps = 1e-7
+    raw_p_clipped = np.clip(raw_p, eps, 1 - eps)
+    logit = np.log(raw_p_clipped / (1.0 - raw_p_clipped))
+    calibrated_p = 1.0 / (1.0 + np.exp(-2.5 * logit))
+    confidence = float(calibrated_p) * 100
 
     # ── Keyword Explainability ────────────────────────────────────────────────
     # We operate on the word-TF-IDF sub-space only for explainability because
@@ -130,7 +137,6 @@ def predict(text: str) -> dict:
                 else:
                     contribution = float(-coeff_val * tfidf_val)
 
-                # Only keep terms that positively influence this prediction
                 if contribution > 0:
                     contributions.append((word, contribution))
 

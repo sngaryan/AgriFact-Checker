@@ -39,3 +39,33 @@ text,label,source,category
 "National Food Security Mission (NFSM) aims to increase production of rice, wheat, pulses, coarse cereals and commercial crops through productivity enhancement.",genuine,Ministry of Agriculture,Food Security
 "Government is shutting down all APMC mandis nationwide from next Monday. Sell all your crop produce to private agents immediately at low rates!",misleading,Panic Messaging,Panic Rumor
 "Farmers can check legitimate scheme guidelines and portal links on official Indian government domain agricoop.nic.in or india.gov.in.",genuine,Official Government Advisory,Portal Verification
+"Mandatory eKYC update for PM Kisan: Pay Rs 99 at http://pmkisan-ekyc-now.org to avoid cancellation of your 17th installment.",misleading,Phishing SMS,Phishing Scam
+"Farmers are requested to complete PM-KISAN e-KYC through OTP based authentication on pmkisan.gov.in portal or biometric authentication at nearest CSC centers.",genuine,Official Government Portal,Scheme Info
+"Mission for Integrated Development of Horticulture (MIDH) promotes holistic growth of the horticulture sector including bamboo and coconut cultivation.",genuine,Ministry of Agriculture,Horticulture
+"Government announced 100 percent subsidy on avocado farming for all farmers who transfer Rs 500 processing fee to UPI ID agri-subsidy@upi.",misleading,WhatsApp Forward,UPI Scam
+"Farmers can purchase certified seeds from National Seeds Corporation (NSC) outlets or authorized state seed portal indiaseeds.com.",genuine,Official Seed Portal,Certified Seeds
+"Mixing salt water with vinegar and spraying on sugarcane fields doubles sugar content in 24 hours without chemical fertilizers.",misleading,Social Media Advice,Fake Advisory
+"NABARD provides re-finance support to cooperative banks and Regional Rural Banks (RRBs) for short term crop loans.",genuine,NABARD Official,Credit Support
+"Alert: Central government announced instant loan waiver for all Kisan Credit Card holders up to 5 lakh rupees on http://kcc-waiver-2026.net.",misleading,Phishing SMS,Loan Scam
+"Sub-Mission on Seeds and Planting Material (SMSP) aims to increase production of certified seeds and upgrade seed multiplication infrastructure.",genuine,Official Ministry Release,Seed Mission
+"Government is giving free electricity transformers to every farm tubewell. Fill up form on http://free-transformer-yojana.com with your bank OTP.",misleading,WhatsApp Scam,Phishing Scam
+"Kisan Drones scheme under SMAM provides financial assistance up to 100 percent to ICAR institutes and KVKs for buying agricultural drones.",genuine,Ministry of Agriculture,Drone Scheme
+"Warning: Government has banned all drip irrigation systems across India starting next week. Switch to flood irrigation immediately.",misleading,Social Media Rumor,Panic Messaging
+"Soil Health Card provides recommendations on 12 key parameters including Nitrogen, Phosphorus, Potassium, Zinc, Iron, and pH levels.",genuine,ICAR Advisory,Soil Health
+"Government will credit Rs 25000 as drought compensation into bank accounts of all farmers who forward this link to 10 WhatsApp contacts.",misleading,Viral Chain Message,Viral Scam
+"Agriculture Infrastructure Fund (AIF) provides medium to long term debt financing facility for investment in post-harvest infrastructure projects.",genuine,Official Ministry Portal,Infrastructure
+"Urgent: Pay Rs 150 processing fee at http://aif-infrastructure-loan.org to get 3% interest subvention for setting up cold storage.",misleading,Phishing SMS,Loan Scam
+"PM-PRANAM scheme aims to incentivize states to promote alternative fertilizers and balanced use of chemical fertilizers.",genuine,Ministry of Chemicals and Fertilizers,Fertilizer Scheme
+"Government declared all synthetic pesticides toxic and illegal starting tomorrow; farmers using chemical sprays face immediate imprisonment.",misleading,Social Media Rumor,Panic Rumor
+"Krishi Vigyan Kendras (KVK) serve as agricultural extension centers created by ICAR to assess location-specific technology modules in agriculture.",genuine,ICAR Extension,Support Center
+"Click this link http://kvk-free-seeds.site to order free hybrid tomato and chilly seeds delivered to your home by speed post.",misleading,WhatsApp Scam,Scam
+"Minimum Support Price (MSP) for wheat for 2024-25 season has been approved at Rs 2275 per quintal.",genuine,Press Information Bureau,MSP
+"Government announced MSP of Rs 10000 per quintal for paddy starting tomorrow. Register at http://msp-bonus-kisan.info immediately.",misleading,Phishing Scam,MSP Scam
+"Central Sector Scheme for Formation and Promotion of 10,000 Farmer Producer Organizations (FPOs) provides handholding support for 5 years.",genuine,Ministry of Agriculture,FPO Scheme
+"FPO registration fee waived off completely! Pay Rs 499 on http://fpo-india-reg.com to get instant 10 lakh government grant.",misleading,WhatsApp Scam,Scam
+"Farmers can check real-time commodity prices across Mandis on e-NAM mobile app or official portal enam.gov.in.",genuine,Official Portal,e-NAM
+"WhatsApp alert: Mandi tax has been increased to 50 percent on all vegetables. Sell your harvest directly to private buyers at low prices today!",misleading,Panic Messaging,Panic Rumor
+"PM-KUSUM Component-B provides subsidy for installation of 17.50 lakh standalone solar powered agriculture pumps.",genuine,MNRE Official Scheme,Solar Scheme
+"Get free solar panel for rooftop and farm tubewell without any cost! Send Aadhaar card and PAN card to WhatsApp number 9876543210.",misleading,WhatsApp Scam,Phishing Scam
+"Farmer Subsidy Update: Farmers can get additional subsidy support on eligible agricultural products purchased through private portal bighaat.com.",misleading,Social Media Commercial,Commercial Scam
+"Buy subsidized seeds, fertilizers, or crop care products through private shopping portal and keep invoice for government subsidy reimbursement.",misleading,WhatsApp Forward,Commercial Fraud

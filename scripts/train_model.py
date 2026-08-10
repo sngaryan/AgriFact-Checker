@@ -88,7 +88,7 @@ def train_and_evaluate():
         ))
     ])
     
-    # Combine train + val for final model training, or train on train and validate on val
+    # Combine train + val for training text, test for evaluation
     X_train_text = train_df['text'].tolist()
     y_train = train_df['label'].tolist()
     
@@ -118,7 +118,7 @@ def train_and_evaluate():
     lr_test_metrics = evaluate_model(log_reg, X_test, y_test, "Calibrated Logistic Regression (Test)", labels)
     
     print("\n--- Training Model 2: Multinomial Naive Bayes Baseline ---")
-    nb = MultinomialNB(alpha=1.0)
+    nb = MultinomialNB(alpha=0.5)
     nb.fit(X_train, y_train)
     nb_val_metrics = evaluate_model(nb, X_val, y_val, "Multinomial Naive Bayes (Val)", labels)
     nb_test_metrics = evaluate_model(nb, X_test, y_test, "Multinomial Naive Bayes (Test)", labels)
@@ -148,7 +148,7 @@ def train_and_evaluate():
     # Save artifacts
     os.makedirs(os.path.dirname(CLASSIFIER_PATH), exist_ok=True)
     joblib.dump(selected_classifier, CLASSIFIER_PATH)
-    joblib.dump(vectorizer, VECTORIZER_PATH)
+    joblib.dump(vectorizer_to_save, VECTORIZER_PATH)
     print(f"\nModel exported successfully to:")
     print(f"  - Classifier: {CLASSIFIER_PATH}")
     print(f"  - Vectorizer: {VECTORIZER_PATH}")
