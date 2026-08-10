@@ -112,45 +112,45 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify({ vote: vote })
                 });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Update button active classes
+                    const parent = btn.parentElement;
+                    const allBtns = parent.querySelectorAll(".feedback-btn");
+                    
+                    allBtns.forEach(b => {
+                        b.classList.remove("active-up", "active-down");
+                    });
+                    
+                    if (vote === "upvote") {
+                        btn.classList.add("active-up");
+                    } else {
+                        btn.classList.add("active-down");
+                    }
+                    
+                    // Show a farmer-friendly success status message in current language
+                    const container = btn.closest(".feedback-container");
+                    let statusText = container.querySelector(".feedback-status");
+                    if (!statusText) {
+                        statusText = document.createElement("span");
+                        statusText.className = "feedback-status";
+                        container.appendChild(statusText);
+                    }
+                    const currentLang = localStorage.getItem("preferred_language") || "en";
+                    statusText.textContent = TRANSLATIONS[currentLang] ? TRANSLATIONS[currentLang]["feedback-thanks"] : "✓ Thanks for helping check!";
+                    
+                    // Disable feedback buttons to prevent multiple clicks
+                    allBtns.forEach(b => b.disabled = true);
+                } else {
+                    console.error("Feedback error:", result.error);
+                }
+            } catch (err) {
+                console.error("Network error saving feedback:", err);
+            }
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          // Update button active classes
-          const parent = btn.parentElement;
-          const allBtns = parent.querySelectorAll(".feedback-btn");
-
-          allBtns.forEach((b) => {
-            b.classList.remove("active-up", "active-down");
-          });
-
-          if (vote === "upvote") {
-            btn.classList.add("active-up");
-          } else {
-            btn.classList.add("active-down");
-          }
-
-          // Show a farmer-friendly success status message
-          const container = btn.closest(".feedback-container");
-          let statusText = container.querySelector(".feedback-status");
-          if (!statusText) {
-            statusText = document.createElement("span");
-            statusText.className = "feedback-status";
-            container.appendChild(statusText);
-          }
-          statusText.textContent = "✓ Thanks for helping check!";
-
-          // Disable feedback buttons to prevent multiple clicks
-          allBtns.forEach((b) => (b.disabled = true));
-        } else {
-          console.error("Feedback error:", result.error);
-        }
-      } catch (err) {
-        console.error("Network error saving feedback:", err);
-      }
     });
-<<<<<<< Updated upstream
 
     // 3. Language Selector Setup
     const updateActiveLanguageButton = (lang) => {
