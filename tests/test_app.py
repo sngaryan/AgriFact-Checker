@@ -53,14 +53,15 @@ def test_check_validation_too_long(client):
     assert response.status_code == 200
     assert b"Text exceeds the limit" in response.data
 
-@patch("app.predict")
+@patch("app.predict_with_domain")
 @patch("app.check_domains")
-def test_check_success(mock_check_domains, mock_predict, client):
-    mock_predict.return_value = {
+def test_check_success(mock_check_domains, mock_predict_with_domain, client):
+    mock_predict_with_domain.return_value = {
         "label": "genuine",
-        "confidence": 92.4,
+        "confidence": 99.5,
         "influential_terms": ["official", "scheme"],
-        "model_version": "v1"
+        "model_version": "v2",
+        "domain_boost": 25.0
     }
     mock_check_domains.return_value = {
         "detected_domain": "pmkisan.gov.in",
@@ -70,13 +71,13 @@ def test_check_success(mock_check_domains, mock_predict, client):
     response = client.post("/check", data={"text": "Verify this official message from pmkisan.gov.in"})
     assert response.status_code == 200
     assert b"Likely Genuine" in response.data
-    assert b"92.4%" in response.data
+    assert b"99.5%" in response.data
     assert b"Verified Portal: pmkisan.gov.in" in response.data
 
-@patch("app.predict")
+@patch("app.predict_with_domain")
 @patch("app.check_domains")
-def test_check_model_not_trained(mock_check_domains, mock_predict, client):
-    mock_predict.side_effect = FileNotFoundError("Model files not found")
+def test_check_model_not_trained(mock_check_domains, mock_predict_with_domain, client):
+    mock_predict_with_domain.side_effect = FileNotFoundError("Model files not found")
     mock_check_domains.return_value = {
         "detected_domain": "",
         "domain_status": "no_domain_found"

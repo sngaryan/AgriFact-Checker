@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify, abort
 from services.database import init_db, save_check, get_recent_checks, save_feedback
 from services.domain_check import check_domains
-from services.predictor import predict, load_model
+from services.predictor import predict, predict_with_domain, load_model
 from services.scheme_matcher import match_scheme
 from services.ocr_service import extract_text_from_image
 from config import MAX_INPUT_LENGTH
@@ -55,11 +55,11 @@ def check():
         )
         
     try:
-        # Call domain check
+        # Call domain check first (needed for trust-fusion)
         domain_result = check_domains(trimmed_text)
         
-        # Call predictor
-        prediction = predict(trimmed_text)
+        # Call predictor with domain status so confidence is boosted accordingly
+        prediction = predict_with_domain(trimmed_text, domain_result["domain_status"])
         
         # Call scheme matcher
         matched_scheme = match_scheme(trimmed_text)
@@ -73,7 +73,8 @@ def check():
             "detected_domain": domain_result["detected_domain"],
             "domain_status": domain_result["domain_status"],
             "matched_scheme": matched_scheme,
-            "extracted_from_image": extracted_from_image
+            "extracted_from_image": extracted_from_image,
+            "domain_boost": prediction.get("domain_boost", 0.0)
         }
         
         # Save check to database
