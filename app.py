@@ -68,21 +68,25 @@ def check():
         # Call scheme matcher
         matched_scheme = match_scheme(trimmed_text)
         
-        # Topic relevance & Domain safety classification:
+        # Topic relevance, Private Phone Number, and Domain safety classification:
         if not relevance_result["is_relevant"]:
             prediction["label"] = "out_of_domain"
-            prediction["confidence"] = min(prediction["confidence"], 60.0)
             if not relevance_result["matched_terms"]:
-                # Clear influential terms if text has 0 agriculture context
                 prediction["influential_terms"] = []
-        elif 48.0 <= prediction["confidence"] <= 54.0 and len(relevance_result["matched_terms"]) <= 1:
-            prediction["label"] = "uncertain"
+        elif domain_result.get("has_private_phone"):
+            # Private 10-digit mobile number in claim (e.g. 7880283765) is a major phishing/scam indicator
+            prediction["label"] = "misleading"
+            if "phone" not in prediction["influential_terms"]:
+                prediction["influential_terms"] = ["helpline", "number", "register"]
         elif domain_result["domain_status"] == "not_in_list":
             prediction["label"] = "commercial_promo"
-            prediction["confidence"] = max(prediction["confidence"], 85.0)
-        elif domain_result["domain_status"] == "verified":
-            if prediction["label"] == "genuine":
-                prediction["confidence"] = max(prediction["confidence"], 90.0)
+        elif prediction["label"] == "genuine" and not matched_scheme and domain_result["domain_status"] != "verified":
+            lower_text = trimmed_text.lower()
+            vague_phishing_triggers = ["our website", "our portal", "register through", "contact helpline", "contact the helpline", "any doubts"]
+            if any(trigger in lower_text for trigger in vague_phishing_triggers):
+                prediction["label"] = "misleading"
+
+
                 
         # Merge result
         payload = {

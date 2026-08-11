@@ -1,22 +1,57 @@
 [
   {
-    "domain": "gov.in",
-    "source": "Government of India Single Window Portal",
-    "last_reviewed": "2026-08-08"
-  },
-  {
-    "domain": "nic.in",
-    "source": "National Informatics Centre, India",
-    "last_reviewed": "2026-08-08"
+    "domain": "india.gov.in",
+    "source": "Government of India National Portal",
+    "last_reviewed": "2026-08-11"
   },
   {
     "domain": "agriwelfare.gov.in",
     "source": "Ministry of Agriculture & Farmers Welfare",
-    "last_reviewed": "2026-08-08"
+    "last_reviewed": "2026-08-11"
   },
   {
     "domain": "pmkisan.gov.in",
     "source": "PM Kisan Samman Nidhi Portal",
-    "last_reviewed": "2026-08-08"
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "pmfby.gov.in",
+    "source": "Pradhan Mantri Fasal Bima Yojana Portal",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "enam.gov.in",
+    "source": "National Agriculture Market (e-NAM) Portal",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "agrimachinery.nic.in",
+    "source": "Sub-Mission on Agricultural Mechanization Portal",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "agricoop.nic.in",
+    "source": "Department of Agriculture & Farmers Welfare",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "mnre.gov.in",
+    "source": "Ministry of New and Renewable Energy (PM-KUSUM)",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "indiaseeds.com",
+    "source": "National Seeds Corporation Official Portal",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "icar.org.in",
+    "source": "Indian Council of Agricultural Research",
+    "last_reviewed": "2026-08-11"
+  },
+  {
+    "domain": "nabard.org",
+    "source": "National Bank for Agriculture and Rural Development",
+    "last_reviewed": "2026-08-11"
   }
 ]

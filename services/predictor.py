@@ -93,12 +93,10 @@ def predict(text: str) -> dict:
     probs = _classifier.predict_proba(X_tfidf)[0]
     raw_p = float(probs[pred_idx])
 
-    # Temperature scaling / Platt calibration for sparse TF-IDF linear log-odds
-    eps = 1e-7
-    raw_p_clipped = np.clip(raw_p, eps, 1 - eps)
-    logit = np.log(raw_p_clipped / (1.0 - raw_p_clipped))
-    calibrated_p = 1.0 / (1.0 + np.exp(-2.5 * logit))
-    confidence = float(calibrated_p) * 100
+    # Use the genuine probability from CalibratedClassifierCV without artificial logit stretching
+    # Cap at 98.5% so the model never claims unrealistic 100% absolute certainty
+    confidence = min(98.5, round(raw_p * 100, 1))
+
 
     # ── Keyword Explainability ────────────────────────────────────────────────
     # We operate on the word-TF-IDF sub-space only for explainability because
@@ -184,15 +182,6 @@ def predict_with_domain(text: str, domain_status: str) -> dict:
         dict: Prediction dict with an extra 'domain_boost' field (pp added).
     """
     result = predict(text)
-    boost = 0.0
-
-    if domain_status == "verified" and result["label"] == "genuine":
-        boost = 25.0
-    elif domain_status == "not_in_list" and result["label"] == "misleading":
-        boost = 10.0
-
-    if boost > 0:
-        result["confidence"] = min(99.5, round(result["confidence"] + boost, 1))
-
-    result["domain_boost"] = boost
+    result["domain_boost"] = 0.0
     return result
+
