@@ -2,9 +2,10 @@ import os
 from flask import Flask, render_template, request, jsonify, abort
 from services.database import init_db, save_check, get_recent_checks, save_feedback
 from services.domain_check import check_domains
-from services.predictor import predict, load_model
+from services.predictor import predict, predict_with_domain, load_model
 from services.scheme_matcher import match_scheme
 from services.ocr_service import extract_text_from_image
+from services.topic_checker import check_agricultural_relevance
 from config import MAX_INPUT_LENGTH
 
 app = Flask(__name__)
@@ -55,23 +56,37 @@ def check():
         )
         
     try:
-        # Call domain check
+        # Check agricultural topic relevance first
+        relevance_result = check_agricultural_relevance(trimmed_text)
+        
+        # Call domain check (needed for trust-fusion)
         domain_result = check_domains(trimmed_text)
         
-        # Call predictor
-        prediction = predict(trimmed_text)
+        # Call predictor with domain status so confidence is boosted accordingly
+        prediction = predict_with_domain(trimmed_text, domain_result["domain_status"])
         
         # Call scheme matcher
         matched_scheme = match_scheme(trimmed_text)
         
-        # Domain safety & Commercial Offer classification:
-        # If a non-government link is detected (.com, .net, etc.), classify as unverified commercial link
-        if domain_result["domain_status"] == "not_in_list":
+        # Topic relevance, Private Phone Number, and Domain safety classification:
+        if not relevance_result["is_relevant"]:
+            prediction["label"] = "out_of_domain"
+            if not relevance_result["matched_terms"]:
+                prediction["influential_terms"] = []
+        elif domain_result.get("has_private_phone"):
+            # Private 10-digit mobile number in claim (e.g. 7880283765) is a major phishing/scam indicator
+            prediction["label"] = "misleading"
+            if "phone" not in prediction["influential_terms"]:
+                prediction["influential_terms"] = ["helpline", "number", "register"]
+        elif domain_result["domain_status"] == "not_in_list":
             prediction["label"] = "commercial_promo"
-            prediction["confidence"] = max(prediction["confidence"], 85.0)
-        elif domain_result["domain_status"] == "verified":
-            if prediction["label"] == "genuine":
-                prediction["confidence"] = max(prediction["confidence"], 90.0)
+        elif prediction["label"] == "genuine" and not matched_scheme and domain_result["domain_status"] != "verified":
+            lower_text = trimmed_text.lower()
+            vague_phishing_triggers = ["our website", "our portal", "register through", "contact helpline", "contact the helpline", "any doubts"]
+            if any(trigger in lower_text for trigger in vague_phishing_triggers):
+                prediction["label"] = "misleading"
+
+
                 
         # Merge result
         payload = {
@@ -82,7 +97,9 @@ def check():
             "detected_domain": domain_result["detected_domain"],
             "domain_status": domain_result["domain_status"],
             "matched_scheme": matched_scheme,
-            "extracted_from_image": extracted_from_image
+            "extracted_from_image": extracted_from_image,
+            "domain_boost": prediction.get("domain_boost", 0.0),
+            "is_agricultural": relevance_result["is_relevant"]
         }
         
         # Save check to database

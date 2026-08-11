@@ -10,10 +10,14 @@ const TRANSLATIONS = {
         "disclaimer-top": "<strong>Please note:</strong> For important scheme decisions, confirm details on official government portals.",
         "badge-genuine": "Likely Genuine",
         "badge-commercial": "Unverified Commercial Link",
+        "badge-out-of-domain": "Non-Agricultural Content",
+        "badge-uncertain": "Inconclusive / Low Confidence",
         "badge-misleading": "Likely Misleading",
         "confidence-score": "Model confidence: {val}%",
         "exp-genuine": "This message matches patterns of reliable farming advice or official government schemes.",
         "exp-commercial": "This message links to a commercial store or private website. It is not an official government scheme portal.",
+        "exp-out-of-domain": "This message or image does not appear to be related to farming, crops, or government schemes.",
+        "exp-uncertain": "Model confidence is too low to make a definitive genuine or misleading classification.",
         "exp-misleading": "This message contains claims or wording patterns frequently found in unverified offers or rumors.",
         "words-influenced": "Words that influenced this result",
         "domain-verified": "Official-portal list: {domain} is recognised",
@@ -47,10 +51,14 @@ const TRANSLATIONS = {
         "disclaimer-top": "<strong>कृपया ध्यान दें:</strong> महत्वपूर्ण योजना निर्णयों के लिए, आधिकारिक सरकारी पोर्टलों पर विवरण की पुष्टि करें।",
         "badge-genuine": "विश्वसनीय होने की संभावना",
         "badge-commercial": "असत्यापित व्यावसायिक लिंक",
+        "badge-out-of-domain": "गैर-कृषि सामग्री",
+        "badge-uncertain": "अनिर्णीत / कम विश्वास",
         "badge-misleading": "गुमराह करने वाला होने की संभावना",
         "confidence-score": "मॉडल का विश्वास: {val}%",
         "exp-genuine": "यह संदेश विश्वसनीय खेती की सलाह या आधिकारिक सरकारी योजनाओं के पैटर्न से मेल खाता है।",
         "exp-commercial": "यह संदेश किसी व्यावसायिक स्टोर या निजी वेबसाइट से लिंक है। यह कोई आधिकारिक सरकारी योजना पोर्टल नहीं है।",
+        "exp-out-of-domain": "यह संदेश या चित्र खेती, फसलों या सरकारी योजनाओं से संबंधित प्रतीत नहीं होता है।",
+        "exp-uncertain": "सटीक रूप से असली या गुमराह करने वाला वर्गीकृत करने के लिए मॉडल का विश्वास बहुत कम है।",
         "exp-misleading": "इस संदेश में ऐसे दावे या शब्द पैटर्न हैं जो अक्सर असत्यापित ऑफ़र या अफवाहों में पाए जाते हैं।",
         "words-influenced": "वे शब्द जिन्होंने इस परिणाम को प्रभावित किया",
         "domain-verified": "आधिकारिक पोर्टल सूची: {domain} मान्यता प्राप्त है",
@@ -76,28 +84,28 @@ const TRANSLATIONS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Textarea character counter
-    const textarea = document.getElementById("text-input");
-    const charCounter = document.getElementById("char-counter-val");
-    const maxChars = 5000;
+  // 1. Textarea character counter
+  const textarea = document.getElementById("text-input");
+  const charCounter = document.getElementById("char-counter-val");
+  const maxChars = 5000;
 
-    if (textarea && charCounter) {
-        const updateCounter = () => {
-            const len = textarea.value.length;
-            charCounter.textContent = len;
-            if (len > maxChars) {
-                charCounter.style.color = "var(--misleading-text)";
-                charCounter.style.fontWeight = "bold";
-            } else {
-                charCounter.style.color = "var(--text-secondary)";
-                charCounter.style.fontWeight = "normal";
-            }
-        };
+  if (textarea && charCounter) {
+    const updateCounter = () => {
+      const len = textarea.value.length;
+      charCounter.textContent = len;
+      if (len > maxChars) {
+        charCounter.style.color = "var(--misleading-text)";
+        charCounter.style.fontWeight = "bold";
+      } else {
+        charCounter.style.color = "var(--text-secondary)";
+        charCounter.style.fontWeight = "normal";
+      }
+    };
 
-        textarea.addEventListener("input", updateCounter);
-        // Run once on load to update counter with prefilled text (if any)
-        updateCounter();
-    }
+    textarea.addEventListener("input", updateCounter);
+    // Run once on load to update counter with prefilled text (if any)
+    updateCounter();
+  }
 
     // 2. Feedback upvote/downvote AJAX mechanism
     const feedbackButtons = document.querySelectorAll(".feedback-btn");
@@ -116,9 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify({ vote: vote })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok) {
                     // Update button active classes
                     const parent = btn.parentElement;
@@ -143,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         container.appendChild(statusText);
                     }
                     const currentLang = localStorage.getItem("preferred_language") || "en";
-                    statusText.textContent = TRANSLATIONS[currentLang]["feedback-thanks"];
+                    statusText.textContent = TRANSLATIONS[currentLang] ? TRANSLATIONS[currentLang]["feedback-thanks"] : "✓ Thanks for helping check!";
                     
                     // Disable feedback buttons to prevent multiple clicks
                     allBtns.forEach(b => b.disabled = true);
@@ -209,6 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 el.textContent = lang === 'hi' ? '🛡️ असली' : '🛡️ Genuine';
             } else if (val === 'commercial_promo') {
                 el.textContent = lang === 'hi' ? '🏷️ व्यावसायिक' : '🏷️ Commercial';
+            } else if (val === 'out_of_domain') {
+                el.textContent = lang === 'hi' ? 'ℹ️ गैर-कृषि' : 'ℹ️ Out of Domain';
+            } else if (val === 'uncertain') {
+                el.textContent = lang === 'hi' ? '❓ अनिर्णीत' : '❓ Uncertain';
             } else {
                 el.textContent = lang === 'hi' ? '⚠️ गुमराह करने वाला' : '⚠️ Misleading';
             }

@@ -86,7 +86,9 @@
         {% if result %}
         {% set is_genuine = result.predicted_label == 'genuine' %}
         {% set is_commercial = result.predicted_label == 'commercial_promo' %}
-        <section class="result-card {{ 'genuine' if is_genuine else ('commercial' if is_commercial else 'misleading') }}" aria-live="assertive">
+        {% set is_ood = result.predicted_label == 'out_of_domain' %}
+        {% set is_uncertain = result.predicted_label == 'uncertain' %}
+        <section class="result-card {{ 'genuine' if is_genuine else ('commercial' if is_commercial else ('out_of_domain' if is_ood else ('uncertain' if is_uncertain else 'misleading'))) }}" aria-live="assertive">
             {% if result.extracted_from_image %}
             <div class="ocr-notice">
                 <div>📷 <strong>Text extracted from uploaded flyer image via OCR</strong></div>
@@ -103,6 +105,10 @@
                     <span class="badge-icon" aria-hidden="true">🛡️</span> <span data-i18n="badge-genuine">Likely Genuine</span>
                     {% elif is_commercial %}
                     <span class="badge-icon" aria-hidden="true">🏷️</span> <span data-i18n="badge-commercial">Unverified Commercial Link</span>
+                    {% elif is_ood %}
+                    <span class="badge-icon" aria-hidden="true">ℹ️</span> <span data-i18n="badge-out-of-domain">Non-Agricultural Content</span>
+                    {% elif is_uncertain %}
+                    <span class="badge-icon" aria-hidden="true">❓</span> <span data-i18n="badge-uncertain">Inconclusive / Low Confidence</span>
                     {% else %}
                     <span class="badge-icon" aria-hidden="true">⚠️</span> <span data-i18n="badge-misleading">Likely Misleading</span>
                     {% endif %}
@@ -122,6 +128,10 @@
                 <span data-i18n="exp-genuine">This message matches patterns of reliable farming advice or official government schemes.</span>
                 {% elif is_commercial %}
                 <span data-i18n="exp-commercial">This message links to a commercial store or private website. It is not an official government scheme portal.</span>
+                {% elif is_ood %}
+                <span data-i18n="exp-out-of-domain">This message or image does not appear to be related to farming, crops, or government schemes.</span>
+                {% elif is_uncertain %}
+                <span data-i18n="exp-uncertain">Model confidence is too low to make a definitive genuine or misleading classification.</span>
                 {% else %}
                 <span data-i18n="exp-misleading">This message contains claims or wording patterns frequently found in unverified offers or rumors.</span>
                 {% endif %}
@@ -227,10 +237,12 @@
                     {% for check in recent_checks %}
                     {% set c_genuine = check.predicted_label == 'genuine' %}
                     {% set c_commercial = check.predicted_label == 'commercial_promo' %}
+                    {% set c_ood = check.predicted_label == 'out_of_domain' %}
+                    {% set c_uncertain = check.predicted_label == 'uncertain' %}
                     <div class="history-row-card">
                         <div class="history-row-top">
-                            <span class="history-badge {{ 'genuine' if c_genuine else ('commercial' if c_commercial else 'misleading') }}" data-i18n-badge="{{ check.predicted_label }}">
-                                {% if c_genuine %}🛡️ Genuine{% elif c_commercial %}🏷️ Commercial{% else %}⚠️ Misleading{% endif %}
+                            <span class="history-badge {{ 'genuine' if c_genuine else ('commercial' if c_commercial else ('out_of_domain' if c_ood else ('uncertain' if c_uncertain else 'misleading'))) }}" data-i18n-badge="{{ check.predicted_label }}">
+                                {% if c_genuine %}🛡️ Genuine{% elif c_commercial %}🏷️ Commercial{% elif c_ood %}ℹ️ Out of Domain{% elif c_uncertain %}❓ Uncertain{% else %}⚠️ Misleading{% endif %}
                             </span>
                             <span class="history-meta" data-i18n-meta data-confidence="{{ check.confidence }}" data-date="{{ check.created_at[:16].replace('T', ' ') }}">
                                 {{ check.confidence }}% confidence • {{ check.created_at[:16].replace('T', ' ') }}
