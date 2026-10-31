@@ -70,12 +70,27 @@ git clone https://github.com/sngaryan/AgriFact-Checker.git
 cd AgriFact-Checker
 ```
 
-### 3. Install Python Dependencies
+### 3. Setup Virtual Environment & Run
+
 ```bash
+# 1. Create a virtual environment (only once)
+python -m venv venv
+
+# 2. Activate it
+# On Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# (If using CMD instead of PowerShell, use: .\venv\Scripts\activate.bat)
+# On Linux / macOS:
+# source venv/bin/activate
+
+# 3. Install packages
 pip install -r requirements.txt
+
+# 4. Run the app
+python app.py
 ```
 
-> **Note:** Pre-trained model artifacts are **already included** in `model/`. You can run the application immediately after installing requirements!
+> **Note:** Pre-trained model artifacts are **already included** in `model/`. The application runs immediately out of the box! Open your browser at **`http://127.0.0.1:5000`**.
 
 ### 4. (Optional) Install Tesseract OCR Engine for Flyer Extraction
 To enable automatic text extraction from uploaded WhatsApp flyer images/posters:
