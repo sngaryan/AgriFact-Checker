@@ -13,9 +13,9 @@ A web-based verification and fact-checking tool designed to protect farmers, Far
 - [Architecture & Technical Design](#-architecture--technical-design)
 - [Tech Stack](#-tech-stack)
 - [Environment Configuration](#-environment-configuration)
-- [Installation & Setup](#-installation--setup)
-- [Training & Evaluating the ML Model](#-training--evaluating-the-ml-model)
+- [Installation & Quick Start](#-installation--quick-start)
 - [Running the Application](#-running-the-application)
+- [Training & Evaluating the ML Model (Optional)](#-training--evaluating-the-ml-model-optional)
 - [Running Automated Tests](#-running-automated-tests)
 - [Datasets & Sample Test Cases](#-datasets--sample-test-cases)
 - [Model Scope & Limitations](#-model-scope--limitations)
@@ -28,11 +28,13 @@ A web-based verification and fact-checking tool designed to protect farmers, Far
 1. **Multi-Modal Claim Ingestion:** Verify raw text forwards or upload WhatsApp poster/flyer screenshots directly.
 2. **Flyer OCR Engine:** Automated text extraction from uploaded images using Pillow and Tesseract OCR.
 3. **Calibrated Machine Learning:** Hybrid word & character n-gram TF-IDF vectorizer paired with a calibrated Logistic Regression classifier to avoid overconfident predictions.
-4. **Domain Trust-Fusion:** Validates URLs against official Indian government portals (`.gov.in`, `.nic.in`), boosting confidence for genuine portals and penalizing unverified domains.
-5. **Scam & Phishing Heuristics:** Detects private 10-digit mobile numbers frequently used in subsidy advance-fee scams.
-6. **Scheme Auto-Matching:** Cross-references claims against known central and state agricultural schemes (e.g., PM-KISAN, PMFBY, PM-KUSUM) via SQLite FTS5 search.
-7. **Transparent Explainability:** Displays the most influential terms driving each verdict.
-8. **Audit Trail & Feedback:** Persists check history and captures user upvote/downvote feedback in SQLite.
+4. **Pre-Trained & Zero-Setup:** Serialized model binaries (`classifier.joblib` & `vectorizer.joblib`) are pre-trained and committed with self-healing auto-train fallbacks on launch.
+5. **Evaluator Sample Pre-fills:** Instant 1-click test buttons (`Genuine Scheme`, `Phishing Scam`, `Commercial Link`) built directly into the UI for rapid testing.
+6. **Domain Trust-Fusion:** Validates URLs against official Indian government portals (`.gov.in`, `.nic.in`), boosting confidence for genuine portals and penalizing unverified domains.
+7. **Scam Mobile Heuristic Alerts:** Detects private 10-digit mobile numbers used in advance-fee scams and surfaces dedicated warnings.
+8. **Scheme Auto-Matching:** Cross-references claims against known central and state agricultural schemes (e.g., PM-KISAN, PMFBY, PM-KUSUM) via SQLite FTS5 search.
+9. **Transparent Explainability:** Displays the most influential terms driving each verdict.
+10. **Audit Trail & Feedback:** Persists check history and captures user upvote/downvote feedback in SQLite.
 
 ---
 
@@ -73,7 +75,7 @@ AgriFact-Checker works out of the box with sensible defaults, but supports envir
 
 ---
 
-## 📦 Installation & Setup
+## 📦 Installation & Quick Start
 
 ### 1. Prerequisites
 - Python 3.11 or newer
@@ -90,6 +92,8 @@ cd AgriFact-Checker
 pip install -r requirements.txt
 ```
 
+> **Note:** Pre-trained model artifacts are **already included** in `model/`. You do not need to run a training script before launching the app!
+
 ### 4. (Optional) Install Tesseract OCR Engine for Flyer Extraction
 To enable automated text extraction from uploaded images/posters:
 - **Windows:** Download and run the installer from [Tesseract at UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki). Ensure `C:\Program Files\Tesseract-OCR` is in your System PATH.
@@ -101,19 +105,6 @@ To enable automated text extraction from uploaded images/posters:
   ```bash
   brew install tesseract tesseract-lang
   ```
-
----
-
-## 🧠 Training & Evaluating the ML Model
-
-Train and calibrate the TF-IDF and Logistic Regression models on the agricultural dataset splits:
-```bash
-python scripts/train_model.py
-```
-This script processes datasets from `data/processed/`, trains both Calibrated Logistic Regression and a Naive Bayes baseline, outputs a comparison table, and saves the binary artifacts to:
-- `model/classifier.joblib`
-- `model/vectorizer.joblib`
-- `model/metrics.json`
 
 ---
 
@@ -130,6 +121,19 @@ flask --app app run
 Open your browser and navigate to **`http://127.0.0.1:5000`**.
 
 System health status can be queried at **`http://127.0.0.1:5000/health`**.
+
+---
+
+## 🧠 Training & Evaluating the ML Model (Optional)
+
+The pre-trained model is already included in `model/`. If you wish to retrain or experiment with new dataset splits, run:
+```bash
+python scripts/train_model.py
+```
+This script processes datasets from `data/processed/`, trains both Calibrated Logistic Regression and a Naive Bayes baseline, outputs a comparison table, and saves the binary artifacts to:
+- `model/classifier.joblib`
+- `model/vectorizer.joblib`
+- `model/metrics.json`
 
 ---
 
@@ -157,6 +161,7 @@ Explore the data assets and test examples:
 - [**Processed Training Splits (`data/processed/`)**](data/processed/): Split datasets (`train.csv`, `val.csv`, `test.csv`, `full_dataset.csv`).
 
 ### Quick Test Cases to Try in the UI:
+You can click the 💡 **Try an example** buttons directly in the web UI, or test these manually:
 - **Genuine Scheme Example:**
   > *"Under the PM-KISAN scheme, eligible landholding farmer families receive a financial benefit of Rs 6000 per year paid in three installments. Verify details at official portal pmkisan.gov.in."*
 - **Phishing / Fraud Example:**
