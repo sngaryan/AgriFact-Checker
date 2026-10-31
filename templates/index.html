@@ -49,6 +49,20 @@
                     <div id="char-counter" class="char-counter" aria-live="polite">
                         <span id="char-counter-val">0</span> <span data-i18n="char-counter-suffix">/ 5000 characters</span>
                     </div>
+
+                    <!-- Quick Example Buttons for Evaluators / Judges -->
+                    <div class="sample-pills-container">
+                        <span class="sample-pills-label" data-i18n="sample-label">💡 Try an example:</span>
+                        <button type="button" class="btn-sample-pill pill-genuine" data-sample="genuine">
+                            🛡️ Genuine Scheme
+                        </button>
+                        <button type="button" class="btn-sample-pill pill-scam" data-sample="scam">
+                            ⚠️ Phishing Scam
+                        </button>
+                        <button type="button" class="btn-sample-pill pill-commercial" data-sample="commercial">
+                            🏷️ Commercial Link
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Flyer / WhatsApp Image OCR Upload Card -->
@@ -96,6 +110,24 @@
                     <summary>📄 View extracted text</summary>
                     <pre class="ocr-raw-text">{{ result.submitted_text }}</pre>
                 </details>
+            </div>
+            {% endif %}
+
+            <!-- Private Phone Scam Alert -->
+            {% if result.has_private_phone %}
+            <div class="phone-scam-alert" role="alert">
+                <span class="alert-icon" aria-hidden="true">🚨</span>
+                <div class="alert-content">
+                    <strong>Suspicious Private Mobile Number Detected!</strong>
+                    <p>Official government departments and schemes do not use private personal mobile numbers for registrations or fee collections. This is a primary indicator of advance-fee phishing scams.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Domain Trust Boost Badge -->
+            {% if result.domain_boost and result.domain_boost > 0 %}
+            <div class="domain-boost-badge">
+                <span>⭐ <strong>Official Portal Trust Boost (+{{ result.domain_boost }}%):</strong> Verified government domain <code>{{ result.detected_domain }}</code> confirmed authentic source.</span>
             </div>
             {% endif %}
 

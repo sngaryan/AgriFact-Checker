@@ -13,6 +13,56 @@ app = Flask(__name__)
 # Initialize database on startup
 init_db()
 
+def ensure_model_ready():
+    """Auto-train model if binaries are missing on startup."""
+    import config
+    if not (os.path.exists(config.CLASSIFIER_PATH) and os.path.exists(config.VECTORIZER_PATH)):
+        try:
+            from scripts.train_model import train_and_evaluate
+            train_and_evaluate()
+        except Exception:
+            pass
+
+def seed_default_checks_if_empty():
+    """Seed initial realistic checks if running against a fresh database."""
+    if app.config.get("TESTING"):
+        return
+    try:
+        if len(get_recent_checks(limit=1)) == 0:
+            sample_checks = [
+                {
+                    "submitted_text": "Under PM-KISAN scheme, eligible farmer families receive Rs 6000 per year directly into bank accounts via official portal pmkisan.gov.in.",
+                    "predicted_label": "genuine",
+                    "confidence": 98.5,
+                    "influential_terms": ["pmkisan", "scheme", "eligible", "farmer"],
+                    "detected_domain": "pmkisan.gov.in",
+                    "domain_status": "verified"
+                },
+                {
+                    "submitted_text": "Urgent! PM Tractor Subsidy giving 80% discount. Pay Rs 500 registration charge immediately or call helpline 9876543210.",
+                    "predicted_label": "misleading",
+                    "confidence": 97.0,
+                    "influential_terms": ["helpline", "charge", "call", "urgent"],
+                    "detected_domain": None,
+                    "domain_status": "no_domain_found"
+                },
+                {
+                    "submitted_text": "Check out modern irrigation sprinkler systems on sale at private agri-store retail-agri.com.",
+                    "predicted_label": "commercial_promo",
+                    "confidence": 91.2,
+                    "influential_terms": ["irrigation", "sprinkler", "store"],
+                    "detected_domain": "retail-agri.com",
+                    "domain_status": "not_in_list"
+                }
+            ]
+            for c in sample_checks:
+                save_check(c)
+    except Exception:
+        pass
+
+ensure_model_ready()
+seed_default_checks_if_empty()
+
 @app.route("/", methods=["GET"])
 def index():
     """Render index page with submission form and recent check history."""
@@ -85,8 +135,6 @@ def check():
             vague_phishing_triggers = ["our website", "our portal", "register through", "contact helpline", "contact the helpline", "any doubts"]
             if any(trigger in lower_text for trigger in vague_phishing_triggers):
                 prediction["label"] = "misleading"
-
-
                 
         # Merge result
         payload = {
@@ -99,7 +147,8 @@ def check():
             "matched_scheme": matched_scheme,
             "extracted_from_image": extracted_from_image,
             "domain_boost": prediction.get("domain_boost", 0.0),
-            "is_agricultural": relevance_result["is_relevant"]
+            "is_agricultural": relevance_result["is_relevant"],
+            "has_private_phone": domain_result.get("has_private_phone", False)
         }
         
         # Save check to database

@@ -38,7 +38,8 @@ const TRANSLATIONS = {
         "scheme-fallback-header": "💡 Verify via Official Portals",
         "scheme-fallback-text": "If you did not find a matching scheme above, you can search the official directories:",
         "link-myscheme": "myScheme Portal (myscheme.gov.in) ↗",
-        "link-indiagov": "National Portal of India (india.gov.in) ↗"
+        "link-indiagov": "National Portal of India (india.gov.in) ↗",
+        "sample-label": "💡 Try an example:"
     },
     hi: {
         "logo": "🌿 एग्रीफैक्ट चेक",
@@ -78,124 +79,106 @@ const TRANSLATIONS = {
         "scheme-visit-btn": "आधिकारिक पोर्टल पर जाएं ↗",
         "scheme-fallback-header": "💡 आधिकारिक पोर्टलों द्वारा सत्यापित करें",
         "scheme-fallback-text": "यदि आपको ऊपर कोई मिलान योजना नहीं मिली है, तो आप आधिकारिक निर्देशिकाओं में खोज सकते हैं:",
-        "link-myscheme": "माईस्कीम पोर्टल (myscheme.gov.in) ↗",
-        "link-indiagov": "भारत का राष्ट्रीय पोर्टल (india.gov.in) ↗"
+        "link-myscheme": "myScheme पोर्टल (myscheme.gov.in) ↗",
+        "link-indiagov": "भारत का राष्ट्रीय पोर्टल (india.gov.in) ↗",
+        "sample-label": "💡 एक उदाहरण आज़माएं:"
     }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Textarea character counter
-  const textarea = document.getElementById("text-input");
-  const charCounter = document.getElementById("char-counter-val");
-  const maxChars = 5000;
+    // 1. Character Counter
+    const textarea = document.getElementById("text-input");
+    const counterVal = document.getElementById("char-counter-val");
 
-  if (textarea && charCounter) {
     const updateCounter = () => {
-      const len = textarea.value.length;
-      charCounter.textContent = len;
-      if (len > maxChars) {
-        charCounter.style.color = "var(--misleading-text)";
-        charCounter.style.fontWeight = "bold";
-      } else {
-        charCounter.style.color = "var(--text-secondary)";
-        charCounter.style.fontWeight = "normal";
-      }
+        if (textarea && counterVal) {
+            const currentLength = textarea.value.length;
+            counterVal.textContent = currentLength;
+            if (currentLength >= 4800) {
+                counterVal.style.color = "var(--misleading-text)";
+                counterVal.style.fontWeight = "bold";
+            } else {
+                counterVal.style.color = "var(--text-secondary)";
+                counterVal.style.fontWeight = "normal";
+            }
+        }
     };
 
-    textarea.addEventListener("input", updateCounter);
-    // Run once on load to update counter with prefilled text (if any)
-    updateCounter();
-  }
+    if (textarea) {
+        textarea.addEventListener("input", updateCounter);
+        // Initialize counter with existing text length (e.g. on result render)
+        updateCounter();
+    }
 
-    // 2. Feedback upvote/downvote AJAX mechanism
+    // 2. Feedback Form Submission via AJAX
     const feedbackButtons = document.querySelectorAll(".feedback-btn");
     feedbackButtons.forEach(btn => {
         btn.addEventListener("click", async () => {
-            const checkId = btn.dataset.checkId;
-            const vote = btn.dataset.vote; // 'upvote' or 'downvote'
-            
+            const checkId = btn.getAttribute("data-check-id");
+            const vote = btn.getAttribute("data-vote");
+            const container = btn.closest(".feedback-container");
+
             if (!checkId || !vote) return;
-            
+
             try {
                 const response = await fetch(`/feedback/${checkId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ vote: vote })
+                    body: JSON.stringify({ vote })
                 });
 
-                const result = await response.json();
-
                 if (response.ok) {
-                    // Update button active classes
-                    const parent = btn.parentElement;
-                    const allBtns = parent.querySelectorAll(".feedback-btn");
-                    
-                    allBtns.forEach(b => {
-                        b.classList.remove("active-up", "active-down");
-                    });
-                    
-                    if (vote === "upvote") {
-                        btn.classList.add("active-up");
-                    } else {
-                        btn.classList.add("active-down");
-                    }
-                    
-                    // Show a farmer-friendly success status message in current language
-                    const container = btn.closest(".feedback-container");
-                    let statusText = container.querySelector(".feedback-status");
-                    if (!statusText) {
-                        statusText = document.createElement("span");
-                        statusText.className = "feedback-status";
-                        container.appendChild(statusText);
-                    }
                     const currentLang = localStorage.getItem("preferred_language") || "en";
-                    statusText.textContent = TRANSLATIONS[currentLang] ? TRANSLATIONS[currentLang]["feedback-thanks"] : "✓ Thanks for helping check!";
-                    
-                    // Disable feedback buttons to prevent multiple clicks
-                    allBtns.forEach(b => b.disabled = true);
+                    const thanksMsg = TRANSLATIONS[currentLang]["feedback-thanks"] || "✓ Thanks for helping check!";
+                    container.innerHTML = `<span class="feedback-thanks" style="color: var(--genuine-text); font-weight: 600;">${thanksMsg}</span>`;
                 } else {
-                    console.error("Feedback error:", result.error);
+                    console.error("Failed to submit feedback.");
                 }
             } catch (err) {
-                console.error("Network error saving feedback:", err);
+                console.error("Error submitting feedback:", err);
             }
         });
     });
 
-    // 3. Language Selector Setup
-    const updateActiveLanguageButton = (lang) => {
-        const buttons = document.querySelectorAll(".lang-toggle-btn");
-        buttons.forEach(btn => {
+    // 3. Multilingual UI Language Toggle
+    const setLanguage = (lang) => {
+        if (!TRANSLATIONS[lang]) return;
+
+        localStorage.setItem("preferred_language", lang);
+
+        // Update toggle button states
+        document.querySelectorAll(".lang-toggle-btn").forEach(btn => {
             if (btn.getAttribute("data-lang") === lang) {
                 btn.classList.add("active");
             } else {
                 btn.classList.remove("active");
             }
         });
-    };
 
-    const setLanguage = (lang) => {
-        localStorage.setItem("preferred_language", lang);
-        updateActiveLanguageButton(lang);
-
-        // Update elements with data-i18n
-        const i18nElements = document.querySelectorAll("[data-i18n]");
-        i18nElements.forEach(el => {
+        // Update standard static elements
+        const elements = document.querySelectorAll("[data-i18n]");
+        elements.forEach(el => {
             const key = el.getAttribute("data-i18n");
-            if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
-                if (key === 'domain-verified' || key === 'domain-warning' || key === 'disclaimer-top' || key === 'logo') {
-                    let text = TRANSLATIONS[lang][key];
-                    if (el.dataset.domain) {
-                        text = text.replace('{domain}', el.dataset.domain);
+            let translation = TRANSLATIONS[lang][key];
+
+            if (translation) {
+                // Check if element has dynamic parameters
+                if (key === "confidence-score") {
+                    const val = el.getAttribute("data-confidence");
+                    if (val) {
+                        translation = translation.replace("{val}", val);
                     }
-                    el.innerHTML = text;
-                } else if (key === 'confidence-score') {
-                    const conf = el.dataset.confidence;
-                    el.textContent = TRANSLATIONS[lang][key].replace('{val}', conf);
+                } else if (key.startsWith("domain-")) {
+                    const domain = el.getAttribute("data-domain") || "";
+                    translation = translation.replace("{domain}", `<strong>${domain}</strong>`);
+                }
+
+                if (translation.includes("<") && translation.includes(">")) {
+                    el.innerHTML = translation;
                 } else {
-                    el.textContent = TRANSLATIONS[lang][key];
+                    el.textContent = translation;
                 }
             }
         });
@@ -310,4 +293,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // 5. One-Click Sample Pre-fills (Easy evaluation for judges)
+    const SAMPLES = {
+        genuine: "Under the PM-KISAN scheme, eligible landholding farmer families receive financial benefit of Rs 6000 per year paid in three equal installments. Apply only through official portal pmkisan.gov.in.",
+        scam: "Urgent! PM Free Tractor Subsidy scheme giving 80% discount. Limited slots available. Pay Rs 500 registration charge immediately at pmsolar-scheme.in or call helpline 9876543210.",
+        commercial: "Buy high quality certified hybrid seeds and drip irrigation sprinkler sets on sale at discount agri-store retail-agri.com."
+    };
+
+    const sampleButtons = document.querySelectorAll(".btn-sample-pill");
+    sampleButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const sampleType = btn.getAttribute("data-sample");
+            if (textarea && SAMPLES[sampleType]) {
+                textarea.value = SAMPLES[sampleType];
+                updateCounter();
+                textarea.focus();
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
 });

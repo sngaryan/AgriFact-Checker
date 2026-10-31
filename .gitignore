@@ -15,10 +15,6 @@ env/
 venv/
 ENV/
 
-# Model artifacts (optional to ignore, but good to recreate)
-model/*.joblib
-model/metrics.json
-
 # OS specific files
 .DS_Store
 Thumbs.db

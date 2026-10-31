@@ -901,3 +901,110 @@ a:focus {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+
+/* ==========================================================================
+   Quick Example Pills
+   ========================================================================== */
+.sample-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+.sample-pills-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.btn-sample-pill {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.btn-sample-pill:hover {
+    background-color: var(--bg-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.pill-genuine:hover {
+    border-color: var(--genuine-border);
+    color: var(--genuine-text);
+}
+
+.pill-scam:hover {
+    border-color: var(--misleading-border);
+    color: var(--misleading-text);
+}
+
+.pill-commercial:hover {
+    border-color: #f39c12;
+    color: #b7791f;
+}
+
+/* ==========================================================================
+   Private Phone Scam Alert & Domain Boost Badges
+   ========================================================================== */
+.phone-scam-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    background-color: #fff5f5;
+    border: 1.5px solid #feb2b2;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    color: #9b2c2c;
+}
+
+.phone-scam-alert .alert-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.phone-scam-alert .alert-content strong {
+    display: block;
+    font-size: 0.98rem;
+    margin-bottom: 0.25rem;
+    color: #742a2a;
+}
+
+.phone-scam-alert .alert-content p {
+    font-size: 0.88rem;
+    margin: 0;
+    line-height: 1.45;
+    color: #9b2c2c;
+}
+
+.domain-boost-badge {
+    background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+    border: 1px solid #9ae6b4;
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.88rem;
+    color: #22543d;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.domain-boost-badge code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    font-weight: 700;
+}

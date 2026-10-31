@@ -1,0 +1,91 @@
+{
+  "model_version": "v2",
+  "selected_model": "Calibrated Logistic Regression (TF-IDF + Char N-gram)",
+  "test_metrics": {
+    "model_name": "Calibrated Logistic Regression (Test)",
+    "accuracy": 1.0,
+    "precision_misleading": 1.0,
+    "recall_misleading": 1.0,
+    "f1_misleading": 1.0,
+    "precision_macro": 1.0,
+    "recall_macro": 1.0,
+    "f1_macro": 1.0,
+    "confusion_matrix": [
+      [
+        13,
+        0
+      ],
+      [
+        0,
+        13
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "genuine",
+      "misleading"
+    ]
+  },
+  "val_metrics": {
+    "model_name": "Calibrated Logistic Regression (Val)",
+    "accuracy": 0.96,
+    "precision_misleading": 0.9231,
+    "recall_misleading": 1.0,
+    "f1_misleading": 0.96,
+    "precision_macro": 0.9615,
+    "recall_macro": 0.9615,
+    "f1_macro": 0.96,
+    "confusion_matrix": [
+      [
+        12,
+        1
+      ],
+      [
+        0,
+        12
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "genuine",
+      "misleading"
+    ]
+  },
+  "baseline_naive_bayes_test": {
+    "model_name": "Multinomial Naive Bayes (Test)",
+    "accuracy": 1.0,
+    "precision_misleading": 1.0,
+    "recall_misleading": 1.0,
+    "f1_misleading": 1.0,
+    "precision_macro": 1.0,
+    "recall_macro": 1.0,
+    "f1_macro": 1.0,
+    "confusion_matrix": [
+      [
+        13,
+        0
+      ],
+      [
+        0,
+        13
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "genuine",
+      "misleading"
+    ]
+  },
+  "train_samples": 119,
+  "val_samples": 25,
+  "test_samples": 26,
+  "feature_count": 7303,
+  "word_features": 2303,
+  "char_features": 5000,
+  "classes": [
+    "genuine",
+    "misleading"
+  ],
+  "improvements": [
+    "FeatureUnion: word bigrams + char 3-5-grams eliminates OOV zero vectors",
+    "CalibratedClassifierCV (Platt sigmoid) produces well-spread confidence scores",
+    "C=5.0 reduces regularization bias on small agriculture dataset"
+  ]
+}
