@@ -15,11 +15,22 @@ POSSIBLE_TESSERACT_PATHS = [
     "/opt/homebrew/bin/tesseract"
 ]
 
+LOCAL_TESSDATA = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'model', 'tessdata'))
+
+def _get_tessdata_arg():
+    """Return custom tessdata-dir argument if project tessdata with Hindi is present."""
+    if os.path.exists(LOCAL_TESSDATA) and os.path.exists(os.path.join(LOCAL_TESSDATA, 'hin.traineddata')):
+        return f"--tessdata-dir {LOCAL_TESSDATA}"
+    return ""
+
 def _configure_tesseract():
     """Detect and configure tesseract command path if not in system PATH."""
     try:
         import pytesseract
-        # If tesseract is already found in PATH, return True
+        # If project local tessdata exists, configure environment
+        if os.path.exists(LOCAL_TESSDATA):
+            os.environ["TESSDATA_PREFIX"] = LOCAL_TESSDATA
+
         if shutil.which("tesseract"):
             return True
             
@@ -85,9 +96,11 @@ def extract_text_from_image(file_storage) -> dict:
             import pytesseract
             extracted_results = []
             
-            # Pass 1: Try preprocessed image with Hindi + English or default
+            # Pass 1: Try preprocessed image with Hindi + English (with project tessdata) or default
+            tess_arg = _get_tessdata_arg()
             for target_img in [preprocessed_img, original_img]:
-                for config_args in ['--psm 3', '--psm 11', '--psm 6']:
+                for psm in ['--psm 3', '--psm 11', '--psm 6']:
+                    config_args = f"{tess_arg} {psm}".strip()
                     try:
                         try:
                             res = pytesseract.image_to_string(target_img, lang='hin+eng', config=config_args)
