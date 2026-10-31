@@ -21,13 +21,15 @@ def check_domains(text: str) -> dict:
             "is_suspicious_signal": False
         }
         
-    # Check for private 10-digit mobile numbers (Indian mobile numbers starting with 6, 7, 8, 9)
-    # Scammers use 10-digit mobile numbers for "helpline/whatsapp/contact", whereas Govt uses 1800 toll-free numbers.
-    private_phone_pattern = re.compile(r'\b[6-9]\d{9}\b')
-    phone_matches = private_phone_pattern.findall(text)
+    # Check for private mobile numbers (including with +91, spaces, hyphens) or UPI payment scams.
+    # Scammers frequently ask for money via UPI or personal mobile numbers.
+    # Official government schemes use 1800 toll-free numbers and never request UPI transfers.
+    has_upi_scam = bool(re.search(r'\b(?:upi\s*(?:no|id|number)?|gpay|paytm|phonepe)\b', text, re.IGNORECASE))
+    phone_pattern = re.compile(r'(?:\+?91[\s-]?)?(?:0[\s-]?)?([1-9]\d{4}[\s-]?[1-9]\d{4}|[1-9]\d{4}[\s-]?\d{5}|[6-9]\d{9})\b')
+    phone_matches = phone_pattern.findall(text)
     
-    # Exclude toll-free numbers (e.g. 1800-180-1551 or 18002005142)
-    has_private_phone = len(phone_matches) > 0 and not ("1800" in text or "1800-" in text)
+    is_toll_free = bool(re.search(r'\b1800[\s-]?\d{3}[\s-]?\d{4}\b', text))
+    has_private_phone = (len(phone_matches) > 0 or has_upi_scam) and not is_toll_free
 
     # Primary regex: URLs starting with http://, https://, or www.
     url_pattern = re.compile(
