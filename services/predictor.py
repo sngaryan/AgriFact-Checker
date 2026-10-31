@@ -182,6 +182,13 @@ def predict_with_domain(text: str, domain_status: str) -> dict:
         dict: Prediction dict with an extra 'domain_boost' field (pp added).
     """
     result = predict(text)
-    result["domain_boost"] = 0.0
+    boost = 0.0
+    if domain_status == "verified" and result["label"] == "genuine":
+        boost = 25.0
+    elif domain_status == "not_in_list" and result["label"] == "misleading":
+        boost = 10.0
+    result["domain_boost"] = boost
+    if boost > 0.0:
+        result["confidence"] = min(99.5, round(result["confidence"] + boost, 1))
     return result
 
