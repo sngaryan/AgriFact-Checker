@@ -164,6 +164,7 @@ Explore the data assets and test examples:
 - [**Dataset Documentation & Card (`data/DATASET_CARD.md`)**](data/DATASET_CARD.md): Details data sources, annotations, and split ratios.
 - [**Raw Agricultural Messages (`data/custom_agri_messages.csv`)**](data/custom_agri_messages.csv): Curated agricultural messages with scheme labels and truth status.
 - [**Processed Training Splits (`data/processed/`)**](data/processed/): Split datasets (`train.csv`, `val.csv`, `test.csv`, `full_dataset.csv`).
+- [**Sample Flyer Images for OCR (`data/sample_flyers/`)**](data/sample_flyers/): 4 real-world test flyers (2 fake/scam flyers and 2 official government announcements) for evaluating image text extraction.
 
 ### Quick Test Cases to Try in the UI:
 You can click the 💡 **Try an example** buttons directly in the web UI, or test these manually:

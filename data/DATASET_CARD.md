@@ -27,6 +27,11 @@ The training corpus consists of two curated data sources:
    - **Content**: 40 supplementary records (20 genuine, 20 misleading).
    - **License**: Public Domain / CC0.
 
+3. **Real-World Sample Flyer Images (`data/sample_flyers/`)**:
+   - **Provenance**: Curated real-world posters for evaluating the multimodal OCR pipeline, consisting of:
+     - 2 Fake/Scam Flyers: UPI advance-deposit scheme scam and unauthorized overseas farm recruitment fee scam.
+     - 2 Official Government Flyers: Ministry of Agriculture Kisan Credit Card (MISS) subsidy and National Natural Farming Mission (राष्ट्रीय प्राकृतिक खेती मिशन) infographic.
+
 ---
 
 ## 3. Data Cleaning & Splitting Methodology
