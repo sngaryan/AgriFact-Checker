@@ -124,13 +124,6 @@
             </div>
             {% endif %}
 
-            <!-- Domain Trust Boost Badge -->
-            {% if result.domain_boost and result.domain_boost > 0 %}
-            <div class="domain-boost-badge">
-                <span>⭐ <strong>Official Portal Trust Boost (+{{ result.domain_boost }}%):</strong> Verified government domain <code>{{ result.detected_domain }}</code> confirmed authentic source.</span>
-            </div>
-            {% endif %}
-
             <div class="result-header">
                 <div class="result-badge-label" id="result-badge" data-label="{{ result.predicted_label }}">
                     {% if is_genuine %}
